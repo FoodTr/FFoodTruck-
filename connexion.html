@@ -1,15 +1,58 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FFoodTrucks - Connexion & Inscription</title>
 
-```
-<link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/client.css">
-```
+    <style>
+    /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
+    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #f8f8f8; color: #333; }
+    
+    .main-wrapper { 
+        background: #f8f8f8; 
+        min-height: 100vh; 
+        width: 100%; 
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centre le contenu sur PC */
+    }
+
+    .header { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 40px 0 20px 0; 
+        background: white; 
+        border-bottom: 1px solid #eee; 
+        position: relative; 
+        width: 100%; 
+    }
+
+    .container { 
+        padding: 20px 30px; 
+        width: 100%; 
+        max-width: 600px; /* Largeur confortable sur PC sans être trop étiré */
+        box-sizing: border-box;
+    }
+
+    /* --- RESTE DU CSS IDENTIQUE --- */
+    .back-btn { position: absolute; left: 20px; bottom: 22px; font-size: 24px; color: #333; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f8f8; border-radius: 50%; border: 1px solid #eee; text-decoration: none; }
+    .logo-text { font-size: 28px; font-weight: 900; font-style: italic; color: #121212; }
+    .logo-text span { color: #FF3B30; }
+    .tabs { display: flex; margin-bottom: 25px; background: #eee; border-radius: 12px; padding: 5px; }
+    .tab { flex: 1; text-align: center; padding: 10px; font-weight: bold; color: #666; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+    .tab.active { background: white; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; color: #555; }
+    .form-input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; background: white; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    .submit-btn { background: #121212; color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; margin-top: 10px; cursor: pointer; transition: 0.3s; }
+    .forgot-pass { text-align: center; margin-top: 15px; font-size: 13px; color: #888; text-decoration: underline; cursor: pointer; }
+    .gerant-footer { text-align: center; padding: 20px; font-size: 13px; margin-top: 30px; color: #666; width: 100%; }
+    .gerant-footer span { color: #FF3B30; font-weight: bold; cursor: pointer; text-decoration: underline; }
+</style>
 
 </head>
 <body>
@@ -17,7 +60,7 @@
 <div class="main-wrapper">
     <div class="header">
         <div class="back-btn" id="btn-back">‹</div>
-        <div class="app-name">F<span>F</span>oodTrucks</div>
+        <div class="logo-text">F<span>F</span>oodTrucks</div>
     </div>
 
 <div class="container">
@@ -26,45 +69,42 @@
         <div class="tab" id="tab-signup">Inscription</div>
     </div>
 
-```
-<form id="auth-form">
-    <div id="signup-fields" style="display: none;">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Nom</label>
-                <input type="text" id="lastName" class="form-input" placeholder="Dupont">
+    <form id="auth-form">
+        <div id="signup-fields" style="display: none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" id="lastName" class="form-input" placeholder="Dupont">
+                </div>
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" id="firstName" class="form-input" placeholder="Jean">
+                </div>
             </div>
             <div class="form-group">
-                <label>Prénom</label>
-                <input type="text" id="firstName" class="form-input" placeholder="Jean">
+                <label>Téléphone</label>
+                <input type="tel" id="phone" class="form-input" placeholder="0600000000">
             </div>
         </div>
+
         <div class="form-group">
-            <label>Téléphone</label>
-            <input type="tel" id="phone" class="form-input" placeholder="0600000000">
+            <label>Adresse Mail</label>
+            <input type="email" id="email" class="form-input" placeholder="votre@email.com" required>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label>Adresse Mail</label>
-        <input type="email" id="email" class="form-input" placeholder="votre@email.com" required>
-    </div>
+        <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+        </div>
 
-    <div class="form-group">
-        <label>Mot de passe</label>
-        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
-    </div>
-
-    <button type="submit" class="submit-btn" id="main-btn">Se connecter</button>
-    
-    <div class="forgot-pass" id="forgot-text">Mot de passe oublié ?</div>
-</form>
-```
-
+        <button type="submit" class="submit-btn" id="main-btn">Se connecter</button>
+        
+        <div class="forgot-pass" id="forgot-text">Mot de passe oublié ?</div>
+    </form>
 </div>
 
-<div style="text-align: center; padding: 20px; font-size: 13px; margin-top: 30px; color: #666; width: 100%;">
-    Vous êtes restaurateur ? <span style="color: #FF3B30; font-weight: bold; cursor: pointer; text-decoration: underline;" id="go-gerant">Accès Gérant</span>
+<div class="gerant-footer">
+    Vous êtes restaurateur ? <span id="go-gerant">Accès Gérant</span>
 </div>
 
 </div>

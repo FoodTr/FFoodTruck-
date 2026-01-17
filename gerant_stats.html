@@ -8,10 +8,76 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-<link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/gerant.css">
+    <style>
+        /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
+        body { 
+            font-family: -apple-system, sans-serif; 
+            margin: 0; 
+            background: #000; 
+            color: white; 
+            padding-bottom: 120px; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+        }
 
+        .main-wrapper { 
+            width: 100%; 
+            max-width: 650px; /* Largeur confortable pour lire les graphiques sur PC */
+            min-height: 100vh; 
+            background: #121212; 
+            position: relative; 
+            border-left: 1px solid #333; 
+            border-right: 1px solid #333; 
+            display: flex;
+            flex-direction: column;
+        }
 
+        .header { 
+            padding: 25px 20px; 
+            background: #1e1e1e; 
+            border-bottom: 2px solid #FF3B30; 
+            text-align: center; 
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .bottom-nav-pro { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            max-width: 650px; /* Aligné sur la largeur du wrapper */
+            height: 85px; 
+            background: #1e1e1e; 
+            border-top: 1px solid #333; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            z-index: 1000; 
+        }
+
+        /* --- RESTE DU CSS CONSERVÉ --- */
+        .container { padding: 20px; flex: 1; }
+        .profile-card { background: #1e1e1e; border: 1px solid #333; border-radius: 25px; margin-bottom: 25px; overflow: hidden; }
+        .profile-header { background: #252525; padding: 12px 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .badge-legal { font-size: 9px; font-weight: 900; color: #FF3B30; letter-spacing: 1px; }
+        .profile-content { padding: 20px; }
+        .profile-row { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: flex-start; }
+        .profile-label { font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold; width: 35%; }
+        .profile-data { font-size: 13px; color: #fff; font-weight: 600; text-align: right; width: 65%; word-break: break-word; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #1e1e1e; border: 1px solid #333; padding: 20px; border-radius: 20px; text-align: center; }
+        .stat-value { font-size: 24px; font-weight: 900; color: #4CAF50; display: block; }
+        .stat-label { font-size: 10px; color: #888; text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
+        .chart-box { background: #1e1e1e; border: 1px solid #333; border-radius: 25px; padding: 20px; margin-bottom: 25px; }
+        .chart-bar-container { display: flex; align-items: flex-end; justify-content: space-between; height: 100px; margin-top: 25px; gap: 8px; }
+        .bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+        .bar { width: 100%; background: linear-gradient(to top, #FF3B30, #ff7b74); border-radius: 4px; min-height: 2px; transition: height 1s; }
+        .day-label { font-size: 9px; color: #666; }
+        .btn-pdf { width: 100%; padding: 18px; background: #fff; color: #000; border: none; border-radius: 15px; font-weight: 900; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
+        .nav-item-pro { display: flex; flex-direction: column; align-items: center; color: #666; text-decoration: none; font-size: 9px; font-weight: bold; gap: 5px; }
+        .nav-item-pro.active { color: #FF3B30; }
+    </style>
 </head>
 <body>
 
