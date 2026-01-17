@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks - Mon Profil</title>
+
+<style>
+    /* TON CSS CONSERVÉ AVEC AJOUTS POUR LES NOUVEAUX STATUTS */
+    @media (min-width: 768px) {
+        body { display: flex; flex-direction: column; align-items: center; background: #000; }
+        .main-wrapper { max-width: 500px; width: 100%; border-left: 1px solid #333; border-right: 1px solid #333; background: #f8f8f8; min-height: 100vh; }
+    }
+    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #f8f8f8; color: #333; padding-bottom: 120px; }
+    .main-wrapper { min-height: 100vh; position: relative; background: #f8f8f8; width: 100%; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+    .back-btn { font-size: 20px; border: 1px solid #333; border-radius: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: white; }
+    .logo-text { font-size: 20px; font-weight: 900; font-style: italic; flex-grow: 1; text-align: center; margin-right: 35px; }
+    .logo-text span { color: #FF3B30; }
+    .container { padding: 15px; }
+    .info-grid { display: flex; gap: 10px; margin-bottom: 25px; }
+    .info-box { flex: 1; background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; position: relative; font-size: 11px; min-height: 120px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .box-title { font-weight: 800; font-size: 13px; margin-bottom: 10px; display: block; color: #999; text-transform: uppercase; }
+    .info-line { margin-bottom: 6px; display: block; color: #555; font-size: 12px; }
+    .info-line b { color: #000; font-weight: 700; }
+    
+    /* GESTION DES COULEURS DE STATUTS */
+    .status-pill { position: absolute; top: 15px; right: 15px; padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+    .status-En_attente { background: #FFF3E0; color: #FF9800; }
+    .status-En_préparation { background: #E3F2FD; color: #2196F3; }
+    .status-Prêt { background: #F3E5F5; color: #9C27B0; }
+    .status-Terminé { background: #E8F5E9; color: #4CAF50; }
+
+    .history-title { font-weight: 900; font-size: 18px; margin-bottom: 15px; padding-left: 5px; }
+    .order-card { background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    
+    .logout-container { padding: 10px 15px; }
+    .logout-btn { width: 100%; padding: 16px; border: 2px solid #FF3B30; background: transparent; color: #FF3B30; border-radius: 18px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; height: 80px; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+    .nav-btn { width: 50px; height: 50px; background: #f8f8f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; color: #ccc; transition: 0.3s; }
+    .nav-btn.active { background: #FF3B30; color: white; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3); }
+</style>
+
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <div class="back-btn" id="btn-back">←</div>
+        <div class="logo-text">F<span>F</span>oodTrucks</div>
+    </div>
+
+<div class="container">
+    <div class="info-grid">
+        <div class="info-box">
+            <span class="box-title">Identité</span>
+            <span class="info-line">Prénom : <b id="display-firstName">...</b></span>
+            <span class="info-line">Nom : <b id="display-lastName">...</b></span>
+            <span class="info-line">Email : <b id="display-email">...</b></span>
+        </div>
+        <div class="info-box">
+            <span class="box-title">Contact</span>
+            <span class="info-line">Tél : <b id="display-phone">...</b></span>
+            <span class="info-line">Compte : <b id="display-role">Client</b></span>
+        </div>
+    </div>
+
+    <div class="history-title">Suivi de commande</div>
+    <div id="history-container">
+        <p style="font-size: 13px; color: #999; text-align: center; padding: 20px;">Chargement de vos commandes...</p>
+    </div>
+
+    <div class="logout-container">
+        <button class="logout-btn" id="btn-logout">DÉCONNEXION</button>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-btn" id="nav-home">📍</div>
+    <div class="nav-btn" id="nav-cart">🛒</div>
+    <div class="nav-btn active">👤</div>
+</nav>
+
+</div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, getDoc, collection, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Navigation
+    document.getElementById('btn-back').onclick = () => window.location.href = 'index.html';
+    document.getElementById('nav-home').onclick = () => window.location.href = 'index.html';
+    document.getElementById('nav-cart').onclick = () => window.location.href = 'panier.html';
+
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            loadUserData(user.uid);
+            loadOrderHistory(user.uid);
+        } else {
+            window.location.href = 'connexion.html';
+        }
+    });
+
+    async function loadUserData(uid) {
+        try {
+            const userDoc = await getDoc(doc(db, "users", uid));
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                document.getElementById('display-firstName').innerText = data.firstName || data.truckName || "-";
+                document.getElementById('display-lastName').innerText = data.lastName || (data.role === 'gerant' ? '(PRO)' : "-");
+                document.getElementById('display-email').innerText = data.email || "-";
+                document.getElementById('display-phone').innerText = data.phone || "-";
+                document.getElementById('display-role').innerText = data.role === 'gerant' ? 'Gérant' : 'Client';
+            }
+        } catch (e) { console.error("Erreur profil:", e); }
+    }
+
+    function loadOrderHistory(uid) {
+        const container = document.getElementById('history-container');
+        
+        // On cherche les commandes où l'utilisateur est soit client, soit le truck (si c'est un gérant qui consulte son profil)
+        const q = query(
+            collection(db, "commandes"),
+            where("clientId", "==", uid),
+            orderBy("createdAt", "desc"),
+            limit(10)
+        );
+
+        onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#ccc; font-size:14px;">Aucune commande pour le moment.</div>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            snapshot.forEach(orderDoc => {
+                const cmd = orderDoc.data();
+                const date = cmd.createdAt ? cmd.createdAt.toDate().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit'}) : "En cours...";
+                
+                // Nettoyage du statut pour le CSS (remplace les espaces et accents pour les classes CSS)
+                const statusClean = (cmd.status || 'En attente').normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, '_');
+                
+                container.innerHTML += `
+                    <div class="order-card">
+                        <span class="status-pill status-${statusClean}">${cmd.status || 'En attente'}</span>
+                        <div style="font-weight: 800; font-size: 14px;">Commande du ${date}</div>
+                        <div style="font-size: 12px; color: #777; margin-top: 5px;">
+                            ${cmd.items ? cmd.items.map(i => `${i.quantity}x ${i.name}`).join(', ') : '...'}
+                        </div>
+                        <div style="font-weight: 900; margin-top: 10px; color: #FF3B30;">Total : ${parseFloat(cmd.totalPrice || 0).toFixed(2)}€</div>
+                    </div>`;
+            });
+        }, (error) => {
+            console.error("Erreur Snapshot:", error);
+            container.innerHTML = `<div style="text-align:center; padding:20px; color:red; font-size:12px;">Erreur de chargement. Vérifiez vos permissions.</div>`;
+        });
+    }
+
+    document.getElementById('btn-logout').onclick = () => {
+        if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
+            signOut(auth).then(() => window.location.href = 'index.html');
+        }
+    };
+</script>
+
+</body>
+</html>

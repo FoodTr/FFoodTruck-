@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks - Mon Panier</title>
+
+<style>
+    /* TON CSS CONSERVÉ */
+    @media (min-width: 768px) {
+        body { display: flex; flex-direction: column; align-items: center; background: #000; }
+        .main-wrapper { max-width: 500px; width: 100%; border-left: 1px solid #333; border-right: 1px solid #333; min-height: 100vh; background: #f8f8f8; }
+    }
+    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #f8f8f8; color: #333; padding-bottom: 120px; }
+    .main-wrapper { width: 100%; background: #f8f8f8; min-height: 100vh; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+    .back-btn { font-size: 20px; border: 1px solid #333; border-radius: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: white; transition: 0.2s; }
+    .app-name { font-size: 18px; font-weight: 800; }
+    .app-name span { color: #FF3B30; }
+    .container { padding: 15px; }
+    h2 { font-size: 22px; font-weight: 900; margin: 10px 0 20px 0; }
+    .cart-item { background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .item-price { font-weight: 800; font-size: 16px; color: #333; }
+    .item-controls { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #f5f5f5; }
+    .qty-selector { display: flex; align-items: center; gap: 12px; background: #f5f5f5; border-radius: 12px; padding: 5px 12px; }
+    .qty-btn { font-size: 18px; font-weight: bold; cursor: pointer; color: #333; border: none; background: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .delete-btn { color: #FF3B30; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .extra-section { background: white; border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid #eee; }
+    .extra-title { font-weight: 800; font-size: 14px; margin-bottom: 10px; display: block; color: #666; }
+    .notes-input { width: 100%; border: 1px solid #f0f0f0; border-radius: 12px; padding: 12px; font-family: inherit; font-size: 14px; box-sizing: border-box; resize: none; background: #fafafa; outline: none; }
+    .time-select { width: 100%; padding: 12px; border: 1px solid #f0f0f0; border-radius: 12px; background: #fafafa; font-size: 14px; font-weight: bold; outline: none; }
+    .summary-box { background: #1a1a1a; color: white; border-radius: 20px; padding: 20px; margin-top: 20px; }
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; opacity: 0.8; }
+    .total-line { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; font-weight: 900; font-size: 18px; opacity: 1; }
+    .checkout-footer { position: fixed; bottom: 0; width: 100%; max-width: 500px; padding: 20px; background: white; border-top: 1px solid #eee; box-sizing: border-box; z-index: 1000; }
+    .pay-btn { background: #FF3B30; color: white; width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+    .empty-cart-msg { display: none; text-align: center; padding: 100px 20px; min-height: 70vh; flex-direction: column; align-items: center; justify-content: center; }
+    .empty-cart-msg.show { display: flex; }
+    .empty-cart-msg .icon { font-size: 80px; margin-bottom: 20px; opacity: 0.3; }
+    .return-btn { display: inline-block; padding: 14px 30px; background: #333; color: white; border-radius: 15px; text-decoration: none; font-weight: bold; }
+</style>
+
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <div class="back-btn" id="btn-back">←</div>
+        <div class="app-name">F<span>F</span>oodTrucks</div>
+        <div style="width: 35px;"></div> 
+    </div>
+
+<div class="container" id="cart-container" style="display: none;">
+    <h2>Mon Panier</h2>
+    <div id="items-list"></div>
+
+    <div class="extra-section">
+        <label class="extra-title">📝 Instructions (Allergies, etc.)</label>
+        <textarea class="notes-input" id="order-notes" rows="2" placeholder="Ex: Sans oignons, allergie aux arachides..."></textarea>
+    </div>
+
+    <div class="extra-section">
+        <label class="extra-title">🕒 Heure de retrait</label>
+        <select class="time-select" id="pickup-time"></select>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-line"><span>Articles</span><span id="subtotal">0,00 €</span></div>
+        <div class="summary-line"><span>Frais FFoodTrucks</span><span>0,90 €</span></div>
+        <div class="summary-line total-line"><span>À PAYER</span><span id="total-price">0,00 €</span></div>
+    </div>
+</div>
+
+<div class="empty-cart-msg" id="empty-msg">
+    <div class="icon">🛒</div>
+    <h3>Votre panier est vide</h3>
+    <p>Découvrez nos Food Trucks et régalez-vous !</p>
+    <a href="index.html" class="return-btn">Explorer la carte</a>
+</div>
+
+<div class="checkout-footer" id="footer-pay" style="display: none;">
+    <button class="pay-btn" id="order-btn">
+        <span>COMMANDER</span>
+        <span id="btn-total">0,00 €</span>
+    </button>
+</div>
+
+</div>
+
+<script type="module">
+    import { auth, db, ts } from './firebase-config.js';
+    import { doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    let cart = JSON.parse(localStorage.getItem('ff_cart')) || [];
+    const SERVICE_FEE = 0.90;
+
+    // --- NAVIGATION ---
+    document.getElementById('btn-back').onclick = () => window.history.back();
+
+    function renderCart() {
+        const list = document.getElementById('items-list');
+        const container = document.getElementById('cart-container');
+        const footer = document.getElementById('footer-pay');
+        const emptyMsg = document.getElementById('empty-msg');
+
+        if (cart.length === 0) {
+            container.style.display = 'none';
+            footer.style.display = 'none';
+            emptyMsg.classList.add('show');
+            return;
+        }
+
+        container.style.display = 'block';
+        footer.style.display = 'block';
+        emptyMsg.classList.remove('show');
+
+        list.innerHTML = "";
+        let subtotal = 0;
+
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+            list.innerHTML += `
+                <div class="cart-item">
+                    <div class="item-top">
+                        <div>
+                            <b style="font-size: 15px;">${item.name}</b>
+                            <div style="font-size: 11px; color: #888; margin-top: 3px;">Unit: ${item.price.toFixed(2)}€</div>
+                        </div>
+                        <div class="item-price">${itemTotal.toFixed(2)} €</div>
+                    </div>
+                    <div class="item-controls">
+                        <div class="qty-selector">
+                            <button class="qty-btn" onclick="updateQty(${index}, -1)">−</button>
+                            <span style="font-weight: 900; min-width: 20px; text-align: center;">${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                        </div>
+                        <div class="delete-btn" onclick="removeItem(${index})">Supprimer</div>
+                    </div>
+                </div>`;
+        });
+
+        const total = subtotal + SERVICE_FEE;
+        document.getElementById('subtotal').innerText = subtotal.toFixed(2).replace('.', ',') + " €";
+        document.getElementById('total-price').innerText = total.toFixed(2).replace('.', ',') + " €";
+        document.getElementById('btn-total').innerText = total.toFixed(2).replace('.', ',') + " €";
+    }
+
+    window.updateQty = (index, change) => {
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) cart.splice(index, 1);
+        saveAndRender();
+    };
+
+    window.removeItem = (index) => {
+        if(confirm('Supprimer cet article ?')) {
+            cart.splice(index, 1);
+            saveAndRender();
+        }
+    };
+
+    function saveAndRender() {
+        localStorage.setItem('ff_cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    function generatePickupTimes() {
+        const select = document.getElementById('pickup-time');
+        let options = '<option value="ASAP">Dès que possible (15-20 min)</option>';
+        const now = new Date();
+        now.setMinutes(now.getMinutes() + 20);
+
+        for (let i = 0; i < 8; i++) {
+            let h = now.getHours();
+            let m = Math.ceil(now.getMinutes() / 15) * 15;
+            if (m >= 60) { h++; m = 0; }
+            now.setHours(h, m);
+            let timeStr = h + "h" + (m < 10 ? '0' + m : m);
+            options += `<option value="${timeStr}">${timeStr}</option>`;
+            now.setMinutes(now.getMinutes() + 15);
+        }
+        select.innerHTML = options;
+    }
+
+    document.getElementById('order-btn').onclick = async function() {
+        const user = auth.currentUser;
+        if (!user) {
+            localStorage.setItem('ff_redirect_after_login', 'panier.html');
+            window.location.href = 'connexion.html';
+            return;
+        }
+
+        const calculatedTotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0) + SERVICE_FEE;
+        const btn = document.getElementById('order-btn');
+        btn.disabled = true;
+        btn.innerHTML = "<span>⏳ Envoi...</span>";
+
+        try {
+            const userSnap = await getDoc(doc(db, "users", user.uid));
+            const userData = userSnap.exists() ? userSnap.data() : {};
+
+            const orderData = {
+                clientId: user.uid,
+                clientName: (userData.firstName || '') + ' ' + (userData.lastName || ''),
+                clientEmail: user.email,
+                clientPhone: userData.phone || '',
+                truckId: cart[0].truckId,
+                items: cart,
+                totalPrice: calculatedTotal,
+                status: "En attente",
+                notes: document.getElementById('order-notes').value,
+                pickupTime: document.getElementById('pickup-time').value,
+                createdAt: ts()
+            };
+
+            await addDoc(collection(db, "commandes"), orderData);
+            
+            localStorage.removeItem('ff_cart');
+            alert("✅ Commande envoyée !\n\nSuivez l'état dans votre profil.");
+            window.location.href = 'profil.html';
+            
+        } catch (error) {
+            alert("❌ Erreur : " + error.message);
+            btn.disabled = false;
+            btn.innerHTML = `<span>COMMANDER</span><span>${document.getElementById('btn-total').innerText}</span>`;
+        }
+    };
+
+    renderCart();
+    generatePickupTimes();
+</script>
+
+</body>
+</html>

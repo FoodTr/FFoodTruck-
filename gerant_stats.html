@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks PRO - Business Intelligence</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* TON CSS CONSERVÉ */
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #000; color: white; padding-bottom: 120px; display: flex; justify-content: center; }
+        .main-wrapper { width: 100%; max-width: 500px; min-height: 100vh; background: #121212; position: relative; border-left: 1px solid #333; border-right: 1px solid #333; }
+        .header { padding: 25px 20px; background: #1e1e1e; border-bottom: 2px solid #FF3B30; text-align: center; }
+        .container { padding: 20px; }
+        .profile-card { background: #1e1e1e; border: 1px solid #333; border-radius: 25px; margin-bottom: 25px; overflow: hidden; }
+        .profile-header { background: #252525; padding: 12px 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .badge-legal { font-size: 9px; font-weight: 900; color: #FF3B30; letter-spacing: 1px; }
+        .profile-content { padding: 20px; }
+        .profile-row { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: flex-start; }
+        .profile-label { font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold; width: 35%; }
+        .profile-data { font-size: 13px; color: #fff; font-weight: 600; text-align: right; width: 65%; word-break: break-word; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #1e1e1e; border: 1px solid #333; padding: 20px; border-radius: 20px; text-align: center; }
+        .stat-value { font-size: 24px; font-weight: 900; color: #4CAF50; display: block; }
+        .stat-label { font-size: 10px; color: #888; text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
+        .chart-box { background: #1e1e1e; border: 1px solid #333; border-radius: 25px; padding: 20px; margin-bottom: 25px; }
+        .chart-bar-container { display: flex; align-items: flex-end; justify-content: space-between; height: 100px; margin-top: 25px; gap: 8px; }
+        .bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+        .bar { width: 100%; background: linear-gradient(to top, #FF3B30, #ff7b74); border-radius: 4px; min-height: 2px; transition: height 1s; }
+        .day-label { font-size: 9px; color: #666; }
+        .btn-pdf { width: 100%; padding: 18px; background: #fff; color: #000; border: none; border-radius: 15px; font-weight: 900; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
+        .bottom-nav-pro { position: fixed; bottom: 0; width: 100%; max-width: 500px; height: 85px; background: #1e1e1e; border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item-pro { display: flex; flex-direction: column; align-items: center; color: #666; text-decoration: none; font-size: 9px; font-weight: bold; gap: 5px; }
+        .nav-item-pro.active { color: #FF3B30; }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="header">
+            <div style="font-size: 10px; color: #FF3B30; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px;">PRO PILOTAGE</div>
+            <h2 id="truck-title" style="margin:0; font-size: 18px; font-weight: 900; font-style: italic;">FFOODTRUCKS BUSINESS</h2>
+        </div>
+
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <span class="badge-legal">IDENTITÉ PROFESSIONNELLE</span>
+                    <span style="font-size: 12px;">📑</span>
+                </div>
+                <div class="profile-content">
+                    <div class="profile-row"><span class="profile-label">Truck</span><span class="profile-data" id="prof-truck">-</span></div>
+                    <div class="profile-row"><span class="profile-label">Gérant</span><span class="profile-data" id="prof-owner">-</span></div>
+                    <div class="profile-row"><span class="profile-label">SIRET</span><span class="profile-data" id="prof-siret">-</span></div>
+                    <div class="profile-row"><span class="profile-label">E-mail</span><span class="profile-data" id="prof-email">-</span></div>
+                    <div class="profile-row"><span class="profile-label">Siège</span><span class="profile-data" id="prof-address" style="color: #888; font-size: 11px;">-</span></div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><span class="stat-value" id="today-ca">0.00€</span><span class="stat-label">CA du jour</span></div>
+                <div class="stat-card"><span class="stat-value" id="today-orders" style="color:#FF3B30;">0</span><span class="stat-label">Commandes</span></div>
+            </div>
+
+            <div class="chart-box">
+                <span class="stat-label">Activité 7 derniers jours</span>
+                <div class="chart-bar-container" id="chart-container"></div>
+            </div>
+
+            <div style="background: #1e1e1e; border-radius: 20px; border: 1px solid #333; margin-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #333;">
+                    <span style="color:#888; font-size:14px;">Panier Moyen</span>
+                    <span id="avg-basket" style="font-weight:bold; color:#4CAF50;">0.00€</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:15px;">
+                    <span style="color:#888; font-size:14px;">Total Historique</span>
+                    <span id="total-cumule" style="font-weight:bold;">0.00€</span>
+                </div>
+            </div>
+
+            <button class="btn-pdf" id="btn-generate-pdf">
+                <span>📄</span> TÉLÉCHARGER LE BILAN PDF
+            </button>
+        </div>
+
+        <nav class="bottom-nav-pro">
+            <a href="gerant_dashboard.html" class="nav-item-pro"><span style="font-size:24px;">📥</span><span>COMMANDES</span></a>
+            <a href="gerant_carte.html" class="nav-item-pro"><span style="font-size:24px;">📜</span><span>MA CARTE</span></a>
+            <a href="gerant_menu.html" class="nav-item-pro"><span style="font-size:24px;">➕</span><span>STUDIO</span></a>
+            <a href="gerant_stats.html" class="nav-item-pro active"><span style="font-size:24px;">📊</span><span>STATS</span></a>
+        </nav>
+    </div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { doc, getDoc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    let allCompletedOrders = [];
+    let truckLegalName = "Chargement...";
+
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            fetchTruckInfo(user.uid);
+            loadStats(user.uid);
+        } else {
+            window.location.href = 'gerant_auth.html';
+        }
+    });
+
+    async function fetchTruckInfo(uid) {
+        const userDoc = await getDoc(doc(db, "users", uid));
+        if(userDoc.exists()) {
+            const data = userDoc.data();
+            truckLegalName = data.truckName || "Food Truck";
+            document.getElementById('prof-truck').innerText = truckLegalName;
+            document.getElementById('prof-owner').innerText = (data.prenom || data.firstName || "") + " " + (data.nom || data.lastName || "Gérant");
+            document.getElementById('prof-siret').innerText = data.siret || "-";
+            document.getElementById('prof-email').innerText = data.email || "-";
+            document.getElementById('prof-address').innerText = data.adresseFacturation || data.adresseSiege || "Non renseignée";
+            document.getElementById('truck-title').innerText = truckLegalName.toUpperCase();
+        }
+    }
+
+    function loadStats(uid) {
+        const now = new Date();
+        const last7Days = Array.from({length: 7}, (_, i) => {
+            const d = new Date(); 
+            d.setDate(now.getDate() - (6 - i));
+            return { 
+                date: d.toLocaleDateString('fr-FR'), 
+                label: d.toLocaleDateString('fr-FR', {weekday:'short'}).toUpperCase(), 
+                revenue: 0 
+            };
+        });
+
+        const q = query(collection(db, "commandes"), where("truckId", "==", uid), where("status", "==", "Terminé"));
+        
+        onSnapshot(q, (snapshot) => {
+            allCompletedOrders = [];
+            let caToday = 0; let nToday = 0; let totalGlobal = 0;
+            last7Days.forEach(d => d.revenue = 0);
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                data.id = docSnap.id;
+                allCompletedOrders.push(data);
+
+                const price = parseFloat(data.totalPrice || 0);
+                const dateObj = data.createdAt?.toDate();
+                if(!dateObj) return;
+
+                const dateStr = dateObj.toLocaleDateString('fr-FR');
+                totalGlobal += price;
+                
+                if(dateStr === now.toLocaleDateString('fr-FR')) { caToday += price; nToday++; }
+                const dayData = last7Days.find(d => d.date === dateStr);
+                if(dayData) dayData.revenue += price;
+            });
+
+            document.getElementById('today-ca').innerText = caToday.toFixed(2) + "€";
+            document.getElementById('today-orders').innerText = nToday;
+            document.getElementById('total-cumule').innerText = totalGlobal.toFixed(2) + "€";
+            document.getElementById('avg-basket').innerText = (snapshot.size > 0 ? totalGlobal / snapshot.size : 0).toFixed(2) + "€";
+
+            const maxRevenue = Math.max(...last7Days.map(d => d.revenue), 10);
+            document.getElementById('chart-container').innerHTML = last7Days.map(d => `
+                <div class="bar-wrapper">
+                    <div class="bar" style="height:${(d.revenue/maxRevenue)*100}%;"></div>
+                    <span class="day-label">${d.label}</span>
+                </div>
+            `).join('');
+        });
+    }
+
+    window.generatePDF = () => {
+        const { jsPDF } = window.jspdf;
+        const docPDF = new jsPDF();
+        
+        docPDF.setFillColor(30, 30, 30);
+        docPDF.rect(0, 0, 210, 45, 'F');
+        docPDF.setTextColor(255, 59, 48);
+        docPDF.setFontSize(22);
+        docPDF.text("BILAN D'ACTIVITE FFOODTRUCKS", 14, 25);
+        
+        docPDF.setTextColor(255, 255, 255);
+        docPDF.setFontSize(12);
+        docPDF.text(`Etablissement : ${truckLegalName}`, 14, 35);
+
+        const rows = allCompletedOrders.map(o => [
+            o.id.slice(-6).toUpperCase(),
+            o.createdAt?.toDate().toLocaleDateString('fr-FR'),
+            o.clientName || "Client",
+            `${parseFloat(o.totalPrice || 0).toFixed(2)}€`
+        ]);
+
+        docPDF.autoTable({
+            startY: 55,
+            head: [['ID', 'DATE', 'CLIENT', 'TOTAL']],
+            body: rows,
+            headStyles: { fillColor: [255, 59, 48] }
+        });
+
+        docPDF.save(`Bilan_${truckLegalName}.pdf`);
+    };
+
+    document.getElementById('btn-generate-pdf').onclick = window.generatePDF;
+</script>
+</body>
+</html>

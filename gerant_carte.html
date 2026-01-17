@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks PRO - Ma Carte</title>
+
+<style>
+    body { font-family: -apple-system, sans-serif; margin: 0; background: #121212; color: white; padding-bottom: 100px; display: flex; justify-content: center; overflow-x: hidden; }
+    .main-wrapper { width: 100%; max-width: 500px; min-height: 100vh; background: #121212; position: relative; border-left: 1px solid #333; border-right: 1px solid #333; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1e1e1e; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+    .back-btn { font-size: 20px; cursor: pointer; border: 1px solid #333; padding: 8px 15px; border-radius: 12px; background: #2a2a2a; }
+    .container { padding: 15px; }
+    .cat-nav { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 20px; scrollbar-width: none; }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-tab { flex: 0 0 auto; padding: 10px 18px; border-radius: 20px; background: #2a2a2a; font-size: 13px; color: #888; border: 1px solid #333; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .cat-tab.active { background: #FF3B30; color: white; border-color: #FF3B30; }
+    .product-item { background: #1e1e1e; border-radius: 25px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; position: relative; transition: 0.3s; }
+    .product-item.out-of-stock { opacity: 0.5; }
+    .rupture-badge { display: none; position: absolute; top: 50%; left: 35%; transform: translate(-50%, -50%) rotate(-15deg); background: #FF3B30; color: white; padding: 6px 15px; font-weight: 900; border-radius: 8px; font-size: 14px; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.5); pointer-events: none; }
+    .product-item.out-of-stock .rupture-badge { display: block; }
+    .prod-img { width: 75px; height: 75px; background: #2a2a2a; border-radius: 18px; object-fit: cover; }
+    .prod-info { flex: 1; }
+    .prod-name { font-weight: bold; font-size: 16px; margin-bottom: 4px; color: #fff; }
+    .prod-price { color: #FF3B30; font-weight: 900; font-size: 15px; }
+    .prod-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    .btn-stock { border: none; padding: 10px; border-radius: 12px; font-size: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; width: 90px; text-align: center; }
+    .btn-stock.in { background: #4CAF50; color: white; }
+    .btn-stock.out { background: #333; color: #888; }
+    .btn-edit { background: transparent; border: 1px solid #444; color: #888; padding: 8px; border-radius: 10px; font-size: 10px; cursor: pointer; width: 90px; }
+    
+    /* LE BOUTON ROUGE (FAB) A ÉTÉ SUPPRIMÉ D'ICI */
+
+    .bottom-nav-pro { position: fixed; bottom: 0; width: 100%; max-width: 500px; height: 85px; background: #1e1e1e; border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+    .nav-item-pro { display: flex; flex-direction: column; align-items: center; color: #666; text-decoration: none; font-size: 9px; font-weight: bold; gap: 5px; }
+    .nav-item-pro.active { color: #FF3B30; }
+</style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <div class="back-btn" id="go-back">←</div>
+        <div style="font-weight: 900; letter-spacing: 1px; font-style: italic;">FFoodTrucks CARTE</div>
+        <div style="width:45px;"></div>
+    </div>
+
+    <div class="container">
+        <div class="cat-nav" id="cat-nav">
+            <div class="cat-tab active">Tous</div>
+        </div>
+        <div id="product-list">
+            <p style="text-align:center; color:#555; margin-top:50px;">Chargement de votre carte...</p>
+        </div>
+    </div>
+
+    <div class="bottom-nav-pro">
+        <a href="gerant_dashboard.html" class="nav-item-pro"><span style="font-size:24px;">📥</span><span>COMMANDES</span></a>
+        <a href="gerant_carte.html" class="nav-item-pro active"><span style="font-size:24px;">📜</span><span>MA CARTE</span></a>
+        <a href="gerant_menu.html" class="nav-item-pro"><span style="font-size:24px;">➕</span><span>STUDIO</span></a>
+        <a href="gerant_stats.html" class="nav-item-pro"><span style="font-size:24px;">📊</span><span>STATS</span></a>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { collection, query, where, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    let allProducts = [];
+    let currentFilter = 'Tous';
+
+    document.getElementById('go-back').onclick = () => window.location.href = 'gerant_dashboard.html';
+
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            listenToMenu(user.uid);
+        } else {
+            window.location.href = 'gerant_auth.html';
+        }
+    });
+
+    function listenToMenu(uid) {
+        const q = query(collection(db, "menu"), where("truckId", "==", uid));
+        
+        onSnapshot(q, (snapshot) => {
+            allProducts = [];
+            let activeCategories = new Set();
+
+            snapshot.forEach(docSnap => {
+                let p = docSnap.data();
+                p.id = docSnap.id;
+                p.stockStatus = (p.stock !== undefined) ? p.stock : true;
+                allProducts.push(p);
+                if (p.category) activeCategories.add(p.category);
+            });
+
+            renderCategories(activeCategories);
+            renderProducts();
+        });
+    }
+
+    window.filterBy = (cat) => {
+        currentFilter = cat;
+        renderProducts();
+        const cats = new Set(allProducts.map(p => p.category).filter(c => c));
+        renderCategories(cats);
+    };
+
+    function renderCategories(categories) {
+        const nav = document.getElementById('cat-nav');
+        let html = `<div class="cat-tab ${currentFilter === 'Tous' ? 'active' : ''}" onclick="filterBy('Tous')">Tous</div>`;
+        categories.forEach(cat => {
+            html += `<div class="cat-tab ${currentFilter === cat ? 'active' : ''}" onclick="filterBy('${cat}')">${cat}</div>`;
+        });
+        nav.innerHTML = html;
+    }
+
+    function renderProducts() {
+        const list = document.getElementById('product-list');
+        const filtered = currentFilter === 'Tous' ? allProducts : allProducts.filter(p => p.category === currentFilter);
+
+        if (filtered.length === 0) {
+            list.innerHTML = `<p style="text-align:center; color:#444; margin-top:50px;">Votre carte est vide.</p>`;
+            return;
+        }
+
+        list.innerHTML = filtered.map(p => `
+            <div class="product-item ${p.stockStatus ? '' : 'out-of-stock'}">
+                <div class="rupture-badge">RUPTURE</div>
+                <img src="${p.image || 'https://via.placeholder.com/80?text=FF'}" class="prod-img">
+                <div class="prod-info">
+                    <div class="prod-name">${p.name || p.nom || 'Produit'}</div>
+                    <div class="prod-price">${parseFloat(p.price || p.prix || 0).toFixed(2)}€</div>
+                </div>
+                <div class="prod-actions">
+                    <button class="btn-stock ${p.stockStatus ? 'in' : 'out'}" onclick="toggleStock('${p.id}', ${p.stockStatus})">
+                        ${p.stockStatus ? 'EN STOCK' : 'ÉPUISÉ'}
+                    </button>
+                    <button class="btn-edit" onclick="editProduct('${p.id}')">Modifier</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.toggleStock = async (id, currentStatus) => {
+        if (!id) return;
+        try {
+            const productRef = doc(db, "menu", id);
+            await updateDoc(productRef, { stock: !currentStatus });
+        } catch (e) {
+            alert("❌ Erreur de mise à jour du stock");
+        }
+    };
+
+    window.editProduct = (id) => {
+        window.location.href = `gerant_menu.html?edit=${id}`;
+    };
+</script>
+
+</body>
+</html>

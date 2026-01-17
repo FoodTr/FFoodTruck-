@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks Pro - Connexion</title>
+
+<style>
+    /* TON CSS CONSERVÉ */
+    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #1a1a1a; color: white; display: flex; justify-content: center; }
+    .main-wrapper { width: 100%; max-width: 500px; min-height: 100vh; background: #1a1a1a; border-left: 1px solid #333; border-right: 1px solid #333; }
+    .header { text-align: center; padding: 30px 20px; background: #000; border-bottom: 2px solid #FF3B30; }
+    .logo-text { font-size: 26px; font-weight: 900; font-style: italic; color: white; }
+    .pro-badge { background: #FF3B30; color: white; font-size: 10px; padding: 2px 8px; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
+    .container { padding: 25px; }
+    .tabs { display: flex; margin-bottom: 25px; background: #2a2a2a; border-radius: 12px; padding: 5px; border: 1px solid #333; }
+    .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; color: #888; cursor: pointer; border-radius: 8px; }
+    .tab.active { background: #FF3B30; color: white; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; color: #FF3B30; }
+    .form-input { width: 100%; padding: 15px; border: 1px solid #333; border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; background: #2a2a2a; color: white; }
+    .address-display { background: #121212 !important; color: #888 !important; border-style: dashed !important; font-size: 13px !important; }
+    .tag-selection { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .tag-choice { padding: 8px 12px; border: 1px solid #444; border-radius: 20px; font-size: 11px; cursor: pointer; color: #bbb; transition: 0.2s; }
+    .tag-choice.selected { background: #FF3B30; border-color: #FF3B30; color: white; }
+    .submit-btn { background: #FF3B30; color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+    #siret-status { font-size: 12px; margin-top: 5px; font-weight: bold; }
+    .status-valid { color: #4CAF50; }
+    .status-error { color: #FF3B30; }
+    .back-link { text-align: center; margin-top: 30px; font-size: 14px; color: #888; cursor: pointer; }
+    .forgot-pass { text-align: center; margin-top: 15px; font-size: 13px; color: #666; text-decoration: underline; cursor: pointer; }
+</style>
+
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <div class="logo-text">FFoodTrucks <span class="pro-badge">PRO</span></div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" id="tab-login" onclick="switchTab('login')">Connexion</div>
+            <div class="tab" id="tab-signup" onclick="switchTab('signup')">Inscription</div>
+        </div>
+
+        <form id="pro-form">
+            <div id="signup-only" style="display: none;">
+                <div class="form-group">
+                    <label>Numéro SIRET (14 chiffres)</label>
+                    <input type="text" id="truckSiret" class="form-input" placeholder="Vérification INPI / INSEE" maxlength="14">
+                    <div id="siret-status"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom du Food Truck</label>
+                    <input type="text" id="truckName" class="form-input" placeholder="Ex: Flame & Grill">
+                </div>
+
+                <div class="form-group" id="address-box" style="display: none;">
+                    <label>Adresse du Siège Social (Auto)</label>
+                    <textarea id="truckAddress" class="form-input address-display" rows="2" readonly></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Spécialités</label>
+                    <div class="tag-selection" id="tag-container">
+                        <div class="tag-choice" onclick="toggleTag(this)">🍔 Burgers</div>
+                        <div class="tag-choice" onclick="toggleTag(this)">🍕 Pizzas</div>
+                        <div class="tag-choice" onclick="toggleTag(this)">🌮 Tacos</div>
+                        <div class="tag-choice" onclick="toggleTag(this)">🌿 Veggie</div>
+                        <div class="tag-choice" onclick="toggleTag(this)">🥩 Halal</div>
+                    </div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;">
+            </div>
+
+            <div class="form-group">
+                <label>Email Professionnel</label>
+                <input type="email" id="email" class="form-input" placeholder="chef@mon-truck.fr" required>
+            </div>
+
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="submit-btn" id="pro-btn">Accéder au Dashboard</button>
+            <div class="forgot-pass" id="forgot-link" onclick="resetPassword()">Mot de passe oublié ?</div>
+        </form>
+
+        <div class="back-link" onclick="window.location.href='index.html'">← Retour au site client</div>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db, ts } from './firebase-config.js';
+    import { 
+        signInWithEmailAndPassword, 
+        createUserWithEmailAndPassword, 
+        sendPasswordResetEmail,
+        signOut 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    let mode = 'login';
+    let selectedTags = [];
+    let isSiretValid = false;
+    let verifiedAddress = "";
+
+    // --- FONCTIONS GLOBALES ---
+    window.switchTab = (type) => {
+        mode = type;
+        const isSignup = (type === 'signup');
+        document.getElementById('tab-signup').classList.toggle('active', isSignup);
+        document.getElementById('tab-login').classList.toggle('active', !isSignup);
+        document.getElementById('signup-only').style.display = isSignup ? 'block' : 'none';
+        document.getElementById('forgot-link').style.display = isSignup ? 'none' : 'block';
+        document.getElementById('pro-btn').innerText = isSignup ? "Créer mon Truck" : "Accéder au Dashboard";
+    };
+
+    window.toggleTag = (el) => {
+        el.classList.toggle('selected');
+        const tag = el.innerText;
+        if (selectedTags.includes(tag)) {
+            selectedTags = selectedTags.filter(t => t !== tag);
+        } else {
+            selectedTags.push(tag);
+        }
+    };
+
+    window.resetPassword = async () => {
+        const email = document.getElementById('email').value.trim();
+        if (!email) return alert("⚠️ Saisissez votre email.");
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("✅ Email envoyé !");
+        } catch (e) { alert("❌ " + e.message); }
+    };
+
+    // --- LOGIQUE SIRET ---
+    const handleSiretInput = async (val) => {
+        const statusEl = document.getElementById('siret-status');
+        const nameInput = document.getElementById('truckName');
+        const addressInput = document.getElementById('truckAddress');
+        const addressBox = document.getElementById('address-box');
+        
+        if (val.length === 14) {
+            statusEl.innerHTML = "⏳ Vérification INPI...";
+            try {
+                const response = await fetch(`https://recherche-entreprises.api.gouv.fr/search?q=${val}`);
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    const info = data.results[0];
+                    isSiretValid = true;
+                    verifiedAddress = info.adresse;
+                    statusEl.innerHTML = "✅ Entreprise Vérifiée";
+                    statusEl.className = "status-valid";
+                    nameInput.value = info.nom_complet; 
+                    addressInput.value = info.adresse;
+                    addressBox.style.display = 'block';
+                } else {
+                    isSiretValid = false;
+                    statusEl.innerHTML = "❌ SIRET introuvable";
+                    statusEl.className = "status-error";
+                    addressBox.style.display = 'none';
+                }
+            } catch (e) {
+                statusEl.innerHTML = "⚠️ Erreur service SIRET";
+            }
+        } else {
+            statusEl.innerHTML = "";
+            addressBox.style.display = 'none';
+            isSiretValid = false;
+        }
+    };
+
+    document.getElementById('truckSiret').addEventListener('input', (e) => handleSiretInput(e.target.value));
+
+    // --- SOUMISSION FORMULAIRE ---
+    document.getElementById('pro-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('pro-btn');
+        
+        btn.disabled = true;
+        btn.innerText = "Chargement...";
+
+        try {
+            if (mode === 'login') {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
+                
+                if (userDoc.exists() && userDoc.data().role === 'gerant') {
+                    window.location.href = 'gerant_dashboard.html';
+                } else {
+                    await signOut(auth);
+                    alert("❌ Accès refusé : ce compte n'est pas un compte gérant.");
+                    btn.disabled = false;
+                    btn.innerText = "Accéder au Dashboard";
+                }
+            } else {
+                // INSCRIPTION
+                if (!isSiretValid) throw new Error("SIRET invalide");
+                if (password.length < 8) throw new Error("Le mot de passe doit faire 8 caractères mini.");
+
+                const truckName = document.getElementById('truckName').value;
+                const siret = document.getElementById('truckSiret').value;
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = userCred.user.uid;
+
+                // Création Profil User
+                await setDoc(doc(db, "users", uid), {
+                    uid, email, truckName, siret,
+                    adresseFacturation: verifiedAddress,
+                    role: "gerant",
+                    isVerified: true,
+                    isOpen: false,
+                    specialities: selectedTags,
+                    createdAt: ts()
+                });
+                
+                // Création Document Truck (pour la carte)
+                await setDoc(doc(db, "trucks", uid), {
+                    truckId: uid,
+                    truckName,
+                    siret,
+                    adresseSiege: verifiedAddress,
+                    specialities: selectedTags,
+                    isOpen: false,
+                    rating: 5.0,
+                    logo: "https://via.placeholder.com/150"
+                });
+                
+                alert("✅ Compte PRO créé avec succès !");
+                window.location.href = 'gerant_dashboard.html';
+            }
+        } catch (error) {
+            alert("❌ " + error.message);
+            btn.disabled = false;
+            btn.innerText = mode === 'login' ? "Accéder au Dashboard" : "Créer mon Truck";
+        }
+    };
+</script>
+
+</body>
+</html>

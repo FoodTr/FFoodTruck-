@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks PRO - Dashboard</title>
+
+<style>
+    /* TON CSS CONSERVÉ */
+    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #000; display: flex; justify-content: center; color: white; overflow-x: hidden; }
+    .main-wrapper { width: 100vw; max-width: 500px; background-color: #121212; min-height: 100vh; position: relative; border-left: 1px solid #333; border-right: 1px solid #333; display: flex; flex-direction: column; }
+    
+    .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; }
+    .modal-content { background: #1e1e1e; border-radius: 30px; padding: 25px; width: 85%; text-align: center; border: 1px solid #333; box-sizing: border-box; }
+    .time-input { width: 100%; max-width: 240px; display: block; margin: 20px auto; padding: 15px 5px; font-size: 45px; font-weight: 900; background: #000; border: 2px solid #333; color: #FF3B30; border-radius: 20px; text-align: center; outline: none; }
+
+    .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1e1e1e; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+    .status-toggle-btn { display: flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 15px; border: 2px solid #4CAF50; cursor: pointer; transition: 0.2s; }
+    .status-toggle-btn.closed { border-color: #FF3B30; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #4CAF50; box-shadow: 0 0 10px #4CAF50; }
+    .status-dot.closed { background: #FF3B30; box-shadow: none; }
+
+    .container { padding: 15px; flex-grow: 1; padding-bottom: 100px; }
+    .order-card { background: #1e1e1e; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 1px solid #333; animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .btn-ready { width: 100%; padding: 20px; border: none; border-radius: 20px; background: #4CAF50; color: white; font-size: 18px; font-weight: 900; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+    .btn-ready:active { transform: scale(0.96); opacity: 0.8; }
+
+    .bottom-nav-pro { position: fixed; bottom: 0; width: 100%; max-width: 500px; height: 85px; background: #1e1e1e; border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+    .nav-item-pro { display: flex; flex-direction: column; align-items: center; color: #666; text-decoration: none; font-size: 10px; font-weight: bold; gap: 5px; cursor: pointer; }
+    .nav-item-pro.active { color: #FF3B30; }
+</style>
+
+</head>
+<body>
+
+<div class="main-wrapper">
+    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" preload="auto"></audio>
+
+    <div id="timeModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin:0; font-size: 18px; color: white;">HEURE DE FIN ?</h2>
+            <input type="time" id="closeTime" class="time-input">
+            <button id="start-btn" style="background:#4CAF50; color:white; border:none; width:100%; padding:20px; border-radius:15px; font-weight:bold; cursor:pointer;">LANCER LE SERVICE 🚀</button>
+            <button id="cancel-btn" style="background:transparent; color:#555; border:none; width:100%; margin-top:10px; cursor:pointer;">ANNULER</button>
+        </div>
+    </div>
+
+    <div class="top-bar">
+        <div id="logout-btn" style="font-size: 22px; cursor: pointer;">🚪</div>
+        <div style="text-align:center;">
+            <b style="font-style: italic;">FFoodTrucks</b>
+            <div style="font-size: 8px; color: #FF3B30; font-weight: 900;">PRO PANEL</div>
+        </div>
+        <div id="main-status-btn" class="status-toggle-btn closed">
+            <div id="led" class="status-dot closed"></div>
+            <span id="label" style="font-weight:900; font-size:10px; color:#FF3B30;">HORS SERVICE</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="order-list"></div>
+        <div id="welcome-msg" style="text-align:center; margin-top:100px; color:#333;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🚚</div>
+            <h3>Aucune commande en attente</h3>
+            <p style="font-size: 13px;">Ouvrez votre service pour recevoir des commandes.</p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav-pro">
+        <div class="nav-item-pro active" onclick="window.location.href='gerant_dashboard.html'">
+            <div style="font-size:24px;">📥</div><span>COMMANDES</span>
+        </div>
+        <div class="nav-item-pro" onclick="window.location.href='gerant_carte.html'">
+            <div style="font-size:24px;">📜</div><span>MA CARTE</span>
+        </div>
+        <div class="nav-item-pro" onclick="window.location.href='gerant_menu.html'">
+            <div style="font-size:24px;">➕</div><span>AJOUTER</span>
+        </div>
+        <div class="nav-item-pro" onclick="window.location.href='gerant_stats.html'">
+            <div style="font-size:24px;">📊</div><span>STATS</span>
+        </div>
+    </nav>
+</div>
+
+<script type="module">
+    import { auth, db, ts } from './firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, onSnapshot, collection, query, where, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    let truckIsOpen = false;
+    let lastCount = -1;
+    let currentTruckId = null;
+
+    // Initialiser l'heure de fin par défaut (+3h)
+    const now = new Date();
+    now.setHours(now.getHours() + 3);
+    document.getElementById('closeTime').value = now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+    // Vérifier l'Auth
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            currentTruckId = user.uid;
+            loadDashboardData(user.uid);
+        } else {
+            window.location.href = 'gerant_auth.html';
+        }
+    });
+
+    function loadDashboardData(uid) {
+        // Écouter le statut du truck
+        onSnapshot(doc(db, "trucks", uid), (snap) => {
+            if (snap.exists()) {
+                truckIsOpen = snap.data().isOpen;
+                updateUIStatus(truckIsOpen);
+            }
+        });
+
+        // Écouter les commandes en attente
+        const q = query(
+            collection(db, "commandes"),
+            where("truckId", "==", uid),
+            where("status", "==", "En attente"),
+            orderBy("createdAt", "desc")
+        );
+
+        onSnapshot(q, (snapshot) => {
+            const list = document.getElementById('order-list');
+            const msg = document.getElementById('welcome-msg');
+            
+            // Notification sonore si nouvelle commande
+            if (lastCount !== -1 && snapshot.size > lastCount) {
+                const sound = document.getElementById('notif-sound');
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Interaction utilisateur requise pour le son"));
+                if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+            }
+            lastCount = snapshot.size;
+
+            if (snapshot.empty) { 
+                list.innerHTML = ""; 
+                msg.style.display = "block"; 
+                return; 
+            }
+            
+            msg.style.display = "none";
+            let html = "";
+            snapshot.forEach((orderDoc) => {
+                const data = orderDoc.data();
+                const itemsList = data.items || [];
+                html += `
+                    <div class="order-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <div>
+                                <span style="font-weight:900; color:#FF3B30; font-size:20px;">#${orderDoc.id.slice(-4).toUpperCase()}</span>
+                                <div style="font-size:12px; color:#888; margin-top:2px;">${data.clientName || 'Client anonyme'}</div>
+                            </div>
+                            <div style="background:#333; color:#fff; padding:10px 15px; border-radius:12px; font-weight:800; border:1px solid #444;">
+                                🕙 ${data.pickupTime || 'ASAP'}
+                            </div>
+                        </div>
+                        <div style="background:#161616; padding:15px; border-radius:15px; font-size:16px; line-height:1.7;">
+                            ${itemsList.map(i => `• <b>${i.quantity || 1}x</b> ${i.name || 'Produit'}`).join('<br>')}
+                        </div>
+                        ${data.notes ? `<div style="color:#FFCC00; font-size:12px; margin-top:12px; background:rgba(255,204,0,0.1); padding:10px; border-radius:10px; border: 1px dashed #FFCC00;">📝 ${data.notes}</div>` : ''}
+                        <button class="btn-ready" onclick="markAsReady('${orderDoc.id}')">MARQUER COMME PRÊT ✅</button>
+                    </div>`;
+            });
+            list.innerHTML = html;
+        });
+    }
+
+    // --- ACTIONS ---
+    window.toggleService = () => {
+        if (!truckIsOpen) document.getElementById('timeModal').style.display = 'flex';
+        else setOpeningStatus(false);
+    };
+
+    window.markAsReady = async (id) => {
+        try {
+            await updateDoc(doc(db, "commandes", id), { status: "Terminé" });
+        } catch (e) {
+            console.error("Erreur mise à jour statut:", e);
+        }
+    };
+
+    window.logout = () => {
+        if(confirm("Se déconnecter du Dashboard FFoodTrucks ?")) {
+            signOut(auth).then(() => window.location.href = "index.html");
+        }
+    };
+
+    async function setOpeningStatus(open) {
+        if (!currentTruckId) return;
+        const timeInput = document.getElementById('closeTime').value;
+        const btn = document.getElementById('start-btn');
+        
+        let updateData = { isOpen: open, closedAt: open ? timeInput : "" };
+
+        if (open) {
+            btn.innerText = "LOCALISATION EN COURS...";
+            btn.disabled = true;
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        updateData.latitude = position.coords.latitude;
+                        updateData.longitude = position.coords.longitude;
+                        updateData.lastUpdate = ts();
+                        
+                        try {
+                            await updateDoc(doc(db, "trucks", currentTruckId), updateData);
+                            document.getElementById('timeModal').style.display = 'none';
+                        } catch (e) {
+                            alert("❌ Erreur lors de l'ouverture: " + e.message);
+                        }
+                        
+                        btn.disabled = false;
+                        btn.innerText = "LANCER LE SERVICE 🚀";
+                    }, 
+                    (error) => {
+                        alert("❌ Géolocalisation nécessaire pour ouvrir le service.");
+                        btn.disabled = false;
+                        btn.innerText = "LANCER LE SERVICE 🚀";
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            }
+        } else {
+            await updateDoc(doc(db, "trucks", currentTruckId), updateData);
+        }
+    }
+
+    function updateUIStatus(open) {
+        const btn = document.getElementById('main-status-btn');
+        const led = document.getElementById('led');
+        const label = document.getElementById('label');
+        if (open) {
+            btn.classList.remove('closed'); led.classList.remove('closed');
+            label.innerText = "EN SERVICE"; label.style.color = "#4CAF50";
+        } else {
+            btn.classList.add('closed'); led.classList.add('closed');
+            label.innerText = "HORS SERVICE"; label.style.color = "#FF3B30";
+        }
+    }
+
+    // Event listeners pour les boutons de la modal
+    document.getElementById('start-btn').onclick = () => setOpeningStatus(true);
+    document.getElementById('cancel-btn').onclick = () => document.getElementById('timeModal').style.display = 'none';
+    document.getElementById('main-status-btn').onclick = () => window.toggleService();
+    document.getElementById('logout-btn').onclick = () => window.logout();
+
+</script>
+
+</body>
+</html>

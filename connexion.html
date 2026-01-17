@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFoodTrucks - Connexion & Inscription</title>
+
+    <style>
+    /* --- Ton CSS reste identique --- */
+    @media (min-width: 768px) {
+        body { display: flex; flex-direction: column; align-items: center; background: #000; }
+        .main-wrapper { max-width: 500px; width: 100%; border-left: 1px solid #333; border-right: 1px solid #333; }
+    }
+    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #f8f8f8; color: #333; }
+    .main-wrapper { background: #f8f8f8; min-height: 100vh; width: 100%; position: relative; }
+    .header { display: flex; align-items: center; justify-content: center; padding: 40px 0 20px 0; background: white; border-bottom: 1px solid #eee; position: relative; }
+    .back-btn { position: absolute; left: 20px; bottom: 22px; font-size: 24px; color: #333; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f8f8; border-radius: 50%; border: 1px solid #eee; text-decoration: none; }
+    .logo-text { font-size: 28px; font-weight: 900; font-style: italic; color: #121212; }
+    .logo-text span { color: #FF3B30; }
+    .container { padding: 20px 30px; }
+    .tabs { display: flex; margin-bottom: 25px; background: #eee; border-radius: 12px; padding: 5px; }
+    .tab { flex: 1; text-align: center; padding: 10px; font-weight: bold; color: #666; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+    .tab.active { background: white; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; color: #555; }
+    .form-input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; font-size: 15px; box-sizing: border-box; outline: none; background: white; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    .submit-btn { background: #121212; color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; margin-top: 10px; cursor: pointer; transition: 0.3s; }
+    .forgot-pass { text-align: center; margin-top: 15px; font-size: 13px; color: #888; text-decoration: underline; cursor: pointer; }
+    .gerant-footer { text-align: center; padding: 20px; font-size: 13px; margin-top: 30px; color: #666; }
+    .gerant-footer span { color: #FF3B30; font-weight: bold; cursor: pointer; text-decoration: underline; }
+</style>
+
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <div class="back-btn" id="btn-back">‹</div>
+        <div class="logo-text">F<span>F</span>oodTrucks</div>
+    </div>
+
+<div class="container">
+    <div class="tabs">
+        <div class="tab active" id="tab-login">Connexion</div>
+        <div class="tab" id="tab-signup">Inscription</div>
+    </div>
+
+    <form id="auth-form">
+        <div id="signup-fields" style="display: none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" id="lastName" class="form-input" placeholder="Dupont">
+                </div>
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" id="firstName" class="form-input" placeholder="Jean">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" id="phone" class="form-input" placeholder="0600000000">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Adresse Mail</label>
+            <input type="email" id="email" class="form-input" placeholder="votre@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="submit-btn" id="main-btn">Se connecter</button>
+        
+        <div class="forgot-pass" id="forgot-text">Mot de passe oublié ?</div>
+    </form>
+</div>
+
+<div class="gerant-footer">
+    Vous êtes restaurateur ? <span id="go-gerant">Accès Gérant</span>
+</div>
+
+</div>
+
+<script type="module">
+    import { auth, db, ts } from './firebase-config.js';
+    import { 
+        signInWithEmailAndPassword, 
+        createUserWithEmailAndPassword, 
+        sendPasswordResetEmail 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    let mode = 'login';
+
+    // Navigation
+    document.getElementById('btn-back').onclick = () => {
+        if (window.history.length > 1) window.history.back();
+        else window.location.href = 'index.html';
+    };
+
+    document.getElementById('go-gerant').onclick = () => window.location.href = 'gerant_auth.html';
+
+    // Gestion des Onglets
+    const switchTab = (type) => {
+        mode = type;
+        const isSignup = (type === 'signup');
+        document.getElementById('tab-signup').classList.toggle('active', isSignup);
+        document.getElementById('tab-login').classList.toggle('active', !isSignup);
+        document.getElementById('signup-fields').style.display = isSignup ? 'block' : 'none';
+        document.getElementById('main-btn').innerText = isSignup ? "Créer mon compte" : "Se connecter";
+        document.getElementById('forgot-text').style.display = isSignup ? 'none' : 'block';
+    };
+
+    document.getElementById('tab-login').onclick = () => switchTab('login');
+    document.getElementById('tab-signup').onclick = () => switchTab('signup');
+
+    // Mot de passe oublié
+    document.getElementById('forgot-text').onclick = async () => {
+        const email = document.getElementById('email').value.trim();
+        if (!email) return alert("⚠️ Veuillez saisir votre email d'abord.");
+        
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("✅ Lien de réinitialisation envoyé !");
+        } catch (e) {
+            alert("❌ Erreur : " + e.message);
+        }
+    };
+
+    // Formulaire
+    document.getElementById('auth-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('main-btn');
+
+        btn.disabled = true;
+        btn.innerText = "Chargement...";
+
+        try {
+            if (mode === 'login') {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
+                
+                if (userDoc.exists() && userDoc.data().role === 'gerant') {
+                    window.location.href = 'gerant_dashboard.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                // Inscription Client
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+
+                if (!firstName || !lastName) throw new Error("Nom et prénom obligatoires");
+
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                
+                await setDoc(doc(db, "users", userCred.user.uid), {
+                    uid: userCred.user.uid,
+                    firstName,
+                    lastName,
+                    phone,
+                    email,
+                    role: "client",
+                    createdAt: ts()
+                });
+
+                alert("✅ Bienvenue !");
+                window.location.href = 'index.html';
+            }
+        } catch (error) {
+            alert("❌ " + error.message);
+            btn.disabled = false;
+            btn.innerText = mode === 'login' ? "Se connecter" : "Créer mon compte";
+        }
+    };
+</script>
+
+</body>
+</html>
