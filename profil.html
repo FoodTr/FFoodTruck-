@@ -5,71 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FFoodTrucks - Mon Profil</title>
 
-<style>
-    /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
-    body { 
-        font-family: -apple-system, sans-serif; 
-        margin: 0; 
-        background-color: #f8f8f8; 
-        color: #333; 
-        padding-bottom: 120px; 
-        display: flex;
-        justify-content: center;
-        min-height: 100vh;
-    }
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/client.css">
 
-    .main-wrapper { 
-        width: 100%; 
-        max-width: 600px; /* Largeur optimale pour consulter son profil sur PC */
-        min-height: 100vh; 
-        position: relative; 
-        background: #f8f8f8; 
-        border-left: 1px solid #eee; 
-        border-right: 1px solid #eee;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .bottom-nav { 
-        position: fixed; 
-        bottom: 0; 
-        width: 100%; 
-        max-width: 600px; /* Aligné sur la largeur du wrapper */
-        height: 80px; 
-        background: white; 
-        border-top: 1px solid #eee; 
-        display: flex; 
-        justify-content: space-around; 
-        align-items: center; 
-        z-index: 1000; 
-    }
-
-    /* --- RESTE DU CSS CONSERVÉ --- */
-    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-box; }
-    .back-btn { font-size: 20px; border: 1px solid #333; border-radius: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: white; }
-    .logo-text { font-size: 20px; font-weight: 900; font-style: italic; flex-grow: 1; text-align: center; margin-right: 35px; }
-    .logo-text span { color: #FF3B30; }
-    .container { padding: 15px; flex: 1; }
-    .info-grid { display: flex; gap: 10px; margin-bottom: 25px; }
-    .info-box { flex: 1; background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; position: relative; font-size: 11px; min-height: 120px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .box-title { font-weight: 800; font-size: 13px; margin-bottom: 10px; display: block; color: #999; text-transform: uppercase; }
-    .info-line { margin-bottom: 6px; display: block; color: #555; font-size: 12px; }
-    .info-line b { color: #000; font-weight: 700; }
-    
-    .status-pill { position: absolute; top: 15px; right: 15px; padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-    .status-En_attente { background: #FFF3E0; color: #FF9800; }
-    .status-En_préparation { background: #E3F2FD; color: #2196F3; }
-    .status-Prêt { background: #F3E5F5; color: #9C27B0; }
-    .status-Terminé { background: #E8F5E9; color: #4CAF50; }
-
-    .history-title { font-weight: 900; font-size: 18px; margin-bottom: 15px; padding-left: 5px; }
-    .order-card { background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    
-    .logout-container { padding: 10px 15px; }
-    .logout-btn { width: 100%; padding: 16px; border: 2px solid #FF3B30; background: transparent; color: #FF3B30; border-radius: 18px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
-    .nav-btn { width: 50px; height: 50px; background: #f8f8f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; color: #ccc; transition: 0.3s; }
-    .nav-btn.active { background: #FF3B30; color: white; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3); }
-</style>
 
 </head>
 <body>
