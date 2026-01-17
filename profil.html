@@ -6,25 +6,56 @@
     <title>FFoodTrucks - Mon Profil</title>
 
 <style>
-    /* TON CSS CONSERVÉ AVEC AJOUTS POUR LES NOUVEAUX STATUTS */
-    @media (min-width: 768px) {
-        body { display: flex; flex-direction: column; align-items: center; background: #000; }
-        .main-wrapper { max-width: 500px; width: 100%; border-left: 1px solid #333; border-right: 1px solid #333; background: #f8f8f8; min-height: 100vh; }
+    /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
+    body { 
+        font-family: -apple-system, sans-serif; 
+        margin: 0; 
+        background-color: #f8f8f8; 
+        color: #333; 
+        padding-bottom: 120px; 
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
     }
-    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #f8f8f8; color: #333; padding-bottom: 120px; }
-    .main-wrapper { min-height: 100vh; position: relative; background: #f8f8f8; width: 100%; }
-    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+
+    .main-wrapper { 
+        width: 100%; 
+        max-width: 600px; /* Largeur optimale pour consulter son profil sur PC */
+        min-height: 100vh; 
+        position: relative; 
+        background: #f8f8f8; 
+        border-left: 1px solid #eee; 
+        border-right: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bottom-nav { 
+        position: fixed; 
+        bottom: 0; 
+        width: 100%; 
+        max-width: 600px; /* Aligné sur la largeur du wrapper */
+        height: 80px; 
+        background: white; 
+        border-top: 1px solid #eee; 
+        display: flex; 
+        justify-content: space-around; 
+        align-items: center; 
+        z-index: 1000; 
+    }
+
+    /* --- RESTE DU CSS CONSERVÉ --- */
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-box; }
     .back-btn { font-size: 20px; border: 1px solid #333; border-radius: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: white; }
     .logo-text { font-size: 20px; font-weight: 900; font-style: italic; flex-grow: 1; text-align: center; margin-right: 35px; }
     .logo-text span { color: #FF3B30; }
-    .container { padding: 15px; }
+    .container { padding: 15px; flex: 1; }
     .info-grid { display: flex; gap: 10px; margin-bottom: 25px; }
     .info-box { flex: 1; background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; position: relative; font-size: 11px; min-height: 120px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     .box-title { font-weight: 800; font-size: 13px; margin-bottom: 10px; display: block; color: #999; text-transform: uppercase; }
     .info-line { margin-bottom: 6px; display: block; color: #555; font-size: 12px; }
     .info-line b { color: #000; font-weight: 700; }
     
-    /* GESTION DES COULEURS DE STATUTS */
     .status-pill { position: absolute; top: 15px; right: 15px; padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
     .status-En_attente { background: #FFF3E0; color: #FF9800; }
     .status-En_préparation { background: #E3F2FD; color: #2196F3; }
@@ -36,7 +67,6 @@
     
     .logout-container { padding: 10px 15px; }
     .logout-btn { width: 100%; padding: 16px; border: 2px solid #FF3B30; background: transparent; color: #FF3B30; border-radius: 18px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
-    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; height: 80px; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
     .nav-btn { width: 50px; height: 50px; background: #f8f8f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; color: #ccc; transition: 0.3s; }
     .nav-btn.active { background: #FF3B30; color: white; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3); }
 </style>
@@ -88,7 +118,6 @@
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { doc, getDoc, collection, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Navigation
     document.getElementById('btn-back').onclick = () => window.location.href = 'index.html';
     document.getElementById('nav-home').onclick = () => window.location.href = 'index.html';
     document.getElementById('nav-cart').onclick = () => window.location.href = 'panier.html';
@@ -118,8 +147,6 @@
 
     function loadOrderHistory(uid) {
         const container = document.getElementById('history-container');
-        
-        // On cherche les commandes où l'utilisateur est soit client, soit le truck (si c'est un gérant qui consulte son profil)
         const q = query(
             collection(db, "commandes"),
             where("clientId", "==", uid),
@@ -137,8 +164,6 @@
             snapshot.forEach(orderDoc => {
                 const cmd = orderDoc.data();
                 const date = cmd.createdAt ? cmd.createdAt.toDate().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit'}) : "En cours...";
-                
-                // Nettoyage du statut pour le CSS (remplace les espaces et accents pour les classes CSS)
                 const statusClean = (cmd.status || 'En attente').normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, '_');
                 
                 container.innerHTML += `
@@ -153,7 +178,7 @@
             });
         }, (error) => {
             console.error("Erreur Snapshot:", error);
-            container.innerHTML = `<div style="text-align:center; padding:20px; color:red; font-size:12px;">Erreur de chargement. Vérifiez vos permissions.</div>`;
+            container.innerHTML = `<div style="text-align:center; padding:20px; color:red; font-size:12px;">Erreur de chargement.</div>`;
         });
     }
 

@@ -6,18 +6,48 @@
     <title>FFoodTrucks - Mon Panier</title>
 
 <style>
-    /* TON CSS CONSERVÉ */
-    @media (min-width: 768px) {
-        body { display: flex; flex-direction: column; align-items: center; background: #000; }
-        .main-wrapper { max-width: 500px; width: 100%; border-left: 1px solid #333; border-right: 1px solid #333; min-height: 100vh; background: #f8f8f8; }
+    /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
+    body { 
+        font-family: -apple-system, sans-serif; 
+        margin: 0; 
+        background-color: #f8f8f8; 
+        color: #333; 
+        padding-bottom: 120px; 
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
     }
-    body { font-family: -apple-system, sans-serif; margin: 0; background-color: #f8f8f8; color: #333; padding-bottom: 120px; }
-    .main-wrapper { width: 100%; background: #f8f8f8; min-height: 100vh; }
-    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+
+    .main-wrapper { 
+        width: 100%; 
+        max-width: 600px; /* Largeur optimale pour le panier sur PC */
+        background: #f8f8f8; 
+        min-height: 100vh; 
+        border-left: 1px solid #eee; 
+        border-right: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .checkout-footer { 
+        position: fixed; 
+        bottom: 0; 
+        width: 100%; 
+        max-width: 600px; /* Aligné sur la largeur du wrapper */
+        padding: 20px; 
+        background: white; 
+        border-top: 1px solid #eee; 
+        box-sizing: border-box; 
+        z-index: 1000; 
+    }
+
+    /* --- RESTE DU CSS CONSERVÉ --- */
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-box; }
     .back-btn { font-size: 20px; border: 1px solid #333; border-radius: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: white; transition: 0.2s; }
     .app-name { font-size: 18px; font-weight: 800; }
     .app-name span { color: #FF3B30; }
-    .container { padding: 15px; }
+    .container { padding: 15px; flex: 1; }
     h2 { font-size: 22px; font-weight: 900; margin: 10px 0 20px 0; }
     .cart-item { background: white; border: 1px solid #eee; border-radius: 20px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
@@ -33,7 +63,6 @@
     .summary-box { background: #1a1a1a; color: white; border-radius: 20px; padding: 20px; margin-top: 20px; }
     .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; opacity: 0.8; }
     .total-line { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; font-weight: 900; font-size: 18px; opacity: 1; }
-    .checkout-footer { position: fixed; bottom: 0; width: 100%; max-width: 500px; padding: 20px; background: white; border-top: 1px solid #eee; box-sizing: border-box; z-index: 1000; }
     .pay-btn { background: #FF3B30; color: white; width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
     .empty-cart-msg { display: none; text-align: center; padding: 100px 20px; min-height: 70vh; flex-direction: column; align-items: center; justify-content: center; }
     .empty-cart-msg.show { display: flex; }
@@ -95,7 +124,6 @@
     let cart = JSON.parse(localStorage.getItem('ff_cart')) || [];
     const SERVICE_FEE = 0.90;
 
-    // --- NAVIGATION ---
     document.getElementById('btn-back').onclick = () => window.history.back();
 
     function renderCart() {
