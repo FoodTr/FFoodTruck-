@@ -56,7 +56,7 @@
         }
         
         .filter-content.open { display: flex; }
-        .group-title { width: 100%; font-size: 10px; color: #999; font-weight: 900; margin: 10px 0 5px 0; border-bottom: 1px solid #eee; padding-bottom: 3px; text-transform: uppercase; }
+        .group-title { width: 100%; font-size: 10px; color: var(--primary); font-weight: 900; margin: 12px 0 6px 0; border-bottom: 1px solid #eee; padding-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         .arrow { transition: 0.3s; font-size: 8px; color: #bbb; }
         .open-section .arrow { transform: rotate(180deg); }
 
@@ -70,27 +70,18 @@
         .slider { flex: 1; -webkit-appearance: none; height: 4px; background: #ddd; border-radius: 5px; outline: none; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        #map { width: 100%; height: 130px; border-radius: 20px; transition: 0.4s; z-index: 1; border: 1px solid #eee; }
+        #map { width: 100%; height: 130px; border-radius: 20px; border: 1px solid #eee; }
         .map-wrapper { padding: 10px 15px; background: white; position: relative; z-index: 100; }
         .btn-locate { position: absolute; bottom: 25px; right: 25px; z-index: 1000; background: white; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; }
 
         .main-content { padding: 15px; padding-bottom: 100px; flex: 1; }
         .section-title { font-weight: 900; font-size: 11px; color: #bbb; text-transform: uppercase; margin-bottom: 15px; }
         
-        .truck-card { background: white; border-radius: 20px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #eee; position: relative; cursor: pointer; transition: 0.2s; }
-        .truck-card.offline { opacity: 0.6; filter: grayscale(1); }
-        .offline-tag { font-size: 9px; background: #333; color: white; padding: 3px 8px; border-radius: 6px; font-weight: 900; position: absolute; top: 12px; right: 50px; }
-
+        .truck-card { background: white; border-radius: 20px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #eee; position: relative; transition: 0.2s; }
         .truck-img { width: 65px; height: 65px; border-radius: 14px; margin-right: 15px; object-fit: cover; background: #eee; }
         .truck-info { flex: 1; }
         .truck-name { font-weight: 900; font-size: 17px; margin-bottom: 3px; }
         .truck-tags { font-size: 11px; color: #888; line-height: 1.4; }
-        
-        .fav-btn { font-size: 24px; color: #eee; cursor: pointer; padding: 5px; }
-        .fav-btn.active { color: var(--primary); }
-
-        .nav-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; background: #f8f8f8; color: #ccc; }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3); }
     </style>
 </head>
 <body>
@@ -109,53 +100,51 @@
         <div class="filters-row">
             <div class="filter-section" id="sec-cuisine">
                 <div class="filter-header" onclick="toggleFilter('cuisine-content', 'sec-cuisine')">
-                    <span>🌍 CUISINES</span>
+                    <span>🌍 CUISINE DU MONDE</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div id="cuisine-content" class="filter-content">
-                    <div class="group-title">BEST-SELLERS</div>
-                    <div class="pref-chip" data-pref="🍔 Burgers">🍔 Burgers</div>
-                    <div class="pref-chip" data-pref="🥩 Smash">🥩 Smash Burgers</div>
+                    <div class="group-title">🍟 FAST-FOOD & SNACKING</div>
+                    <div class="pref-chip" data-pref="🍔 Burgers">🍔 Burgers / Smash</div>
                     <div class="pref-chip" data-pref="🍕 Pizzas">🍕 Pizzas</div>
-                    <div class="pref-chip" data-pref="🍟 Snacking">🍟 Snacking</div>
+                    <div class="pref-chip" data-pref="🍟 Snacking">🍟 Snacking / Poutine</div>
                     
-                    <div class="group-title">🇫🇷 FRANCE & EUROPE</div>
-                    <div class="pref-chip" data-pref="🥨 Terroir">🇫🇷 Terroir (Aligot/Truffade)</div>
-                    <div class="pref-chip" data-pref="🥞 Crêpes">🥞 Crêpes & Galettes</div>
-                    <div class="pref-chip" data-pref="🍝 Italie">🇮🇹 Italie (Pâtes/Risotto)</div>
-                    <div class="pref-chip" data-pref="🇪🇸 Espagne">🇪🇸 Espagne (Paella/Tapas)</div>
-                    <div class="pref-chip" data-pref="🇵🇹 Portugal">🇵🇹 Portugal (Poulet braisé)</div>
-                    <div class="pref-chip" data-pref="🐟 UK">🇬🇧 Fish & Chips</div>
+                    <div class="group-title">🇫🇷 CUISINE FRANÇAISE</div>
+                    <div class="pref-chip" data-pref="🥨 Terroir">🥨 Terroir (Aligot, Plats régionaux)</div>
+                    <div class="pref-chip" data-pref="🥞 Crêperie">🥞 Crêpes & Galettes</div>
+                    <div class="pref-chip" data-pref="🥖 Boulangerie">🥖 Sandwichs & Salades</div>
 
-                    <div class="group-title">🌍 AFRIQUE</div>
-                    <div class="pref-chip" data-pref="🇸🇳 Sénégal">🇸🇳 Sénégal (Yassa/Mafé)</div>
-                    <div class="pref-chip" data-pref="🇨🇮 Côte d’Ivoire">🇨🇮 Côte d’Ivoire (Garba/Alloco)</div>
-                    <div class="pref-chip" data-pref="🇨🇲 Cameroun">🇨🇲 Cameroun (Ndolé)</div>
-                    <div class="pref-chip" data-pref="🇲🇦 Maghreb">🇲🇦 Maghreb (Couscous/Tajine)</div>
+                    <div class="group-title">🌍 CUISINE AFRICAINE</div>
+                    <div class="pref-chip" data-pref="🇸🇳 Sénégal">🇸🇳 Sénégalais (Yassa, Mafé)</div>
+                    <div class="pref-chip" data-pref="🇨🇮 Côte d’Ivoire">🇨🇮 Ivoirien (Garba, Alloco)</div>
+                    <div class="pref-chip" data-pref="🇨🇲 Cameroun">🇨🇲 Camerounais (Ndolé)</div>
+                    <div class="pref-chip" data-pref="🇲🇦 Maghreb">🇲🇦 Maghreb (Couscous, Tajine)</div>
 
-                    <div class="group-title">🏝️ ANTILLES & OCÉAN INDIEN</div>
-                    <div class="pref-chip" data-pref="🇬🇵 Antilles">🇬🇵 Antilles (Bokit/Accras)</div>
-                    <div class="pref-chip" data-pref="🇷🇪 Réunion">🇷🇪 Réunion (Rougail Saucisse)</div>
-                    <div class="pref-chip" data-pref="🇭🇹 Haïti">🇭🇹 Haïti (Griot)</div>
+                    <div class="group-title">🏝️ CUISINE ANTILLAISE</div>
+                    <div class="pref-chip" data-pref="🇬🇵 Antilles">🇬🇵 Antillais (Bokit, Accras)</div>
+                    <div class="pref-chip" data-pref="🇷🇪 Réunion">🇷🇪 Réunionnais (Rougail)</div>
+                    <div class="pref-chip" data-pref="🇭🇹 Haïti">🇭🇹 Haïtien (Griot)</div>
 
-                    <div class="group-title">🌮 AMÉRIQUES</div>
-                    <div class="pref-chip" data-pref="🇲🇽 Mexique">🇲🇽 Mexique (Tacos/Burritos)</div>
-                    <div class="pref-chip" data-pref="🇨🇦 Canada">🇨🇦 Canada (Poutine)</div>
-                    <div class="pref-chip" data-pref="🇺🇸 USA">🇺🇸 USA Style</div>
+                    <div class="group-title">🇺🇸 CUISINE AMÉRICAINE</div>
+                    <div class="pref-chip" data-pref="🇲🇽 Mexique">🇲🇽 Mexicain (Tacos, Burritos)</div>
+                    <div class="pref-chip" data-pref="🇺🇸 USA">🇺🇸 USA (Soul Food, BBQ)</div>
                     <div class="pref-chip" data-pref="🇧🇷 Brésil">🇧🇷 Brésil & Latino</div>
 
-                    <div class="group-title">🥢 ASIE & ORIENT</div>
-                    <div class="pref-chip" data-pref="🥢 Vietnam">🥢 Vietnam (Banh Mi/Pho)</div>
-                    <div class="pref-chip" data-pref="🍜 Thaïlande">🍜 Thaï (Pad Thaï)</div>
-                    <div class="pref-chip" data-pref="🍱 Japon">🍱 Japon (Ramen/Sushi)</div>
-                    <div class="pref-chip" data-pref="🍛 Inde">🍛 Inde (Curry/Naan)</div>
-                    <div class="pref-chip" data-pref="🥙 Liban">🥙 Liban (Mezzés/Falafel)</div>
+                    <div class="group-title">🥢 CUISINE ASIATIQUE</div>
+                    <div class="pref-chip" data-pref="🥢 Vietnam">🥢 Vietnam (Banh Mi, Pho)</div>
+                    <div class="pref-chip" data-pref="🍜 Thaïlande">🍜 Thaï (Pad Thaï, Wok)</div>
+                    <div class="pref-chip" data-pref="🍱 Japon">🍱 Japon (Ramen, Sushi)</div>
+                    <div class="pref-chip" data-pref="🍛 Inde">🍛 Indien (Curry, Naan)</div>
+
+                    <div class="group-title">🥙 CUISINE ORIENTALE</div>
+                    <div class="pref-chip" data-pref="🥙 Liban">🥙 Libanais (Mezzés, Falafel)</div>
+                    <div class="pref-chip" data-pref="🥙 Turquie">🥙 Turc (Kebab, Gözleme)</div>
                 </div>
             </div>
 
             <div class="filter-section" id="sec-regime">
                 <div class="filter-header" onclick="toggleFilter('regime-content', 'sec-regime')">
-                    <span>🌿 RÉGIMES</span>
+                    <span>🌿 RÉGIMES & LABELS</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div id="regime-content" class="filter-content">
