@@ -35,14 +35,14 @@
         }
 
         /* Controls & Side-by-Side Filters */
-        .top-controls { padding: 15px; background: white; border-bottom: 1px solid #eee; z-index: 1500; }
+        .top-controls { padding: 15px; background: white; border-bottom: 1px solid #eee; z-index: 1500; position: relative; }
         
         .search-container { position: relative; margin-bottom: 15px; }
         .search-input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 15px; border: 1px solid #eee; background: #f1f1f1; font-size: 14px; outline: none; box-sizing: border-box; }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; }
 
-        .filters-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .filter-section { flex: 1; position: relative; }
+        .filters-row { display: flex; gap: 10px; margin-bottom: 10px; position: relative; }
+        .filter-section { flex: 1; }
         
         .filter-header { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -50,16 +50,16 @@
             color: #555; background: #f9f9f9; border: 1px solid #eee; border-radius: 12px;
         }
 
+        /* Menu Pleine Largeur (Correctif Bug Débordement) */
         .filter-content { 
-            display: none; flex-wrap: wrap; gap: 6px; padding: 12px; 
-            position: absolute; top: 110%; left: 0; width: 220%; 
+            display: none; flex-wrap: wrap; gap: 6px; padding: 15px; 
+            position: absolute; top: 110%; left: 0; right: 0; 
             background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             z-index: 3000; border: 1px solid #eee; max-height: 400px; overflow-y: auto;
         }
-        #sec-regime .filter-content { left: auto; right: 0; width: 180%; }
         
         .filter-content.open { display: flex; }
-        .group-title { width: 100%; font-size: 10px; color: #999; font-weight: 900; margin: 10px 0 5px 0; border-bottom: 1px solid #eee; padding-bottom: 3px; }
+        .group-title { width: 100%; font-size: 10px; color: #999; font-weight: 900; margin: 10px 0 5px 0; border-bottom: 1px solid #eee; padding-bottom: 3px; text-transform: uppercase; }
         .arrow { transition: 0.3s; font-size: 8px; color: #bbb; }
         .open-section .arrow { transform: rotate(180deg); }
 
@@ -75,7 +75,6 @@
 
         /* Map & List */
         #map { width: 100%; height: 130px; border-radius: 20px; transition: 0.4s; z-index: 1; border: 1px solid #eee; }
-        #map.expanded { height: 350px; }
         .map-wrapper { padding: 10px 15px; background: white; position: relative; z-index: 100; }
         .btn-locate { position: absolute; bottom: 25px; right: 25px; z-index: 1000; background: white; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; }
 
@@ -118,41 +117,36 @@
                     <span class="arrow">▼</span>
                 </div>
                 <div id="cuisine-content" class="filter-content">
-                    <div class="group-title">INCONTOURNABLES</div>
+                    <div class="group-title">BEST-SELLERS</div>
                     <div class="pref-chip" data-pref="🍔 Burgers">🍔 Burgers</div>
                     <div class="pref-chip" data-pref="🥩 Smash">🥩 Smash</div>
                     <div class="pref-chip" data-pref="🍕 Pizzas">🍕 Pizzas</div>
-                    <div class="pref-chip" data-pref="🍟 Snacking">🍟 Snacking</div>
                     
-                    <div class="group-title">EUROPE & TERROIR</div>
-                    <div class="pref-chip" data-pref="🇫🇷 Français">🇫🇷 Français</div>
-                    <div class="pref-chip" data-pref="🥞 Crêpes">🥞 Crêpes</div>
-                    <div class="pref-chip" data-pref="🥨 Terroir">🥨 Terroir</div>
-                    <div class="pref-chip" data-pref="🍝 Italien">🍝 Italien</div>
-                    <div class="pref-chip" data-pref="🇪🇸 Espagnol">🇪🇸 Espagnol</div>
-                    <div class="pref-chip" data-pref="🐟 Fish & Chips">🐟 Fish&Chips</div>
+                    <div class="group-title">AFRIQUE</div>
+                    <div class="pref-chip" data-pref="🇸🇳 Sénégalais">🇸🇳 Sénégalais (Yassa/Mafé)</div>
+                    <div class="pref-chip" data-pref="🇨🇮 Ivoirien">🇨🇮 Ivoirien (Garba/Alloco)</div>
+                    <div class="pref-chip" data-pref="🇨🇲 Camerounais">🇨🇲 Camerounais (Ndolé)</div>
+                    <div class="pref-chip" data-pref="🇲🇦 Marocain">🇲🇦 Marocain</div>
+                    <div class="pref-chip" data-pref="🇩🇿 Algérien">🇩🇿 Algérien</div>
 
-                    <div class="group-title">AMÉRIQUES</div>
-                    <div class="pref-chip" data-pref="🌮 Mexicain">🌮 Mexicain</div>
-                    <div class="pref-chip" data-pref="🌯 Burritos">🌯 Burritos</div>
-                    <div class="pref-chip" data-pref="🇺🇸 USA">🇺🇸 USA</div>
-                    <div class="pref-chip" data-pref="🇧🇷 Brésilien">🇧🇷 Brésilien</div>
+                    <div class="group-title">ANTILLES & OCÉAN INDIEN</div>
+                    <div class="pref-chip" data-pref="🇬🇵 Antillais">🇬🇵 Antillais (Bokit/Accras)</div>
+                    <div class="pref-chip" data-pref="🇷🇪 Réunionnais">🇷🇪 Réunionnais (Rougail)</div>
+                    <div class="pref-chip" data-pref="🇭🇹 Haïtien">🇭🇹 Haïtien</div>
+                    <div class="pref-chip" data-pref="🏝️ Mauricien">🏝️ Mauricien</div>
 
                     <div class="group-title">ASIE & ORIENT</div>
+                    <div class="pref-chip" data-pref="🥢 Vietnamien">🥢 Vietnamien (Banh Mi)</div>
                     <div class="pref-chip" data-pref="🍱 Japonais">🍱 Japonais</div>
-                    <div class="pref-chip" data-pref="🥢 Vietnamien">🥢 Vietnamien</div>
-                    <div class="pref-chip" data-pref="🍜 Wok/Thaï">🍜 Wok/Thaï</div>
+                    <div class="pref-chip" data-pref="🍜 Thaï">🍜 Thaï</div>
                     <div class="pref-chip" data-pref="🍛 Indien">🍛 Indien</div>
                     <div class="pref-chip" data-pref="🥙 Libanais">🥙 Libanais</div>
-                    <div class="pref-chip" data-pref="🥙 Kebab/Gyros">🥙 Kebab/Gyros</div>
 
-                    <div class="group-title">AFRIQUE & ANTILLES</div>
-                    <div class="pref-chip" data-pref="🌍 Africain">🌍 Africain</div>
-                    <div class="pref-chip" data-pref="🏝️ Antillais">🏝️ Antillais</div>
-
-                    <div class="group-title">AUTRES</div>
-                    <div class="pref-chip" data-pref="🍩 Desserts">🍩 Desserts</div>
-                    <div class="pref-chip" data-pref="☕ Coffee Shop">☕ Coffee Shop</div>
+                    <div class="group-title">EUROPE & AMÉRIQUES</div>
+                    <div class="pref-chip" data-pref="🇫🇷 Terroir">🇫🇷 Terroir (Aligot)</div>
+                    <div class="pref-chip" data-pref="🥞 Crêpes">🥞 Crêpes & Galettes</div>
+                    <div class="pref-chip" data-pref="🇲🇽 Mexicain">🇲🇽 Mexicain</div>
+                    <div class="pref-chip" data-pref="🇧🇷 Brésilien">🇧🇷 Brésilien</div>
                 </div>
             </div>
 
@@ -162,14 +156,14 @@
                     <span class="arrow">▼</span>
                 </div>
                 <div id="regime-content" class="filter-content">
-                    <div class="group-title">RÉGIMES ALIMENTAIRES</div>
+                    <div class="group-title">RÉGIMES</div>
                     <div class="pref-chip" data-pref="🥗 Veggie">🥗 Végétarien</div>
                     <div class="pref-chip" data-pref="🌿 Vegan">🌿 Vegan</div>
                     <div class="pref-chip" data-pref="🥩 Halal">🥩 Halal</div>
                     <div class="pref-chip" data-pref="🕎 Casher">🕎 Casher</div>
                     <div class="pref-chip" data-pref="🌾 Sans Gluten">🌾 Sans Gluten</div>
                     
-                    <div class="group-title">QUALITÉ & LABELS</div>
+                    <div class="group-title">QUALITÉ</div>
                     <div class="pref-chip" data-pref="🏠 Maison">🏠 Fait Maison</div>
                     <div class="pref-chip" data-pref="📍 Local">📍 Local / Bio</div>
                     <div class="pref-chip" data-pref="🌶️ Épicé">🌶️ Épicé</div>
