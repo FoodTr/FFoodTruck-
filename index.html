@@ -23,7 +23,6 @@
             border-left: 1px solid #eee; border-right: 1px solid #eee; 
         }
 
-        /* Header */
         .header { text-align: center; padding: 15px 0; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 2000; }
         .app-name { font-size: 22px; font-weight: 900; font-style: italic; }
         .app-name span { color: var(--primary); }
@@ -34,7 +33,6 @@
             justify-content: space-around; align-items: center; z-index: 9999 !important; 
         }
 
-        /* Controls & Side-by-Side Filters */
         .top-controls { padding: 15px; background: white; border-bottom: 1px solid #eee; z-index: 1500; position: relative; }
         
         .search-container { position: relative; margin-bottom: 15px; }
@@ -50,7 +48,6 @@
             color: #555; background: #f9f9f9; border: 1px solid #eee; border-radius: 12px;
         }
 
-        /* Menu Pleine Largeur (Correctif Bug Débordement) */
         .filter-content { 
             display: none; flex-wrap: wrap; gap: 6px; padding: 15px; 
             position: absolute; top: 110%; left: 0; right: 0; 
@@ -73,7 +70,6 @@
         .slider { flex: 1; -webkit-appearance: none; height: 4px; background: #ddd; border-radius: 5px; outline: none; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* Map & List */
         #map { width: 100%; height: 130px; border-radius: 20px; transition: 0.4s; z-index: 1; border: 1px solid #eee; }
         .map-wrapper { padding: 10px 15px; background: white; position: relative; z-index: 100; }
         .btn-locate { position: absolute; bottom: 25px; right: 25px; z-index: 1000; background: white; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; }
@@ -119,34 +115,41 @@
                 <div id="cuisine-content" class="filter-content">
                     <div class="group-title">BEST-SELLERS</div>
                     <div class="pref-chip" data-pref="🍔 Burgers">🍔 Burgers</div>
-                    <div class="pref-chip" data-pref="🥩 Smash">🥩 Smash</div>
+                    <div class="pref-chip" data-pref="🥩 Smash">🥩 Smash Burgers</div>
                     <div class="pref-chip" data-pref="🍕 Pizzas">🍕 Pizzas</div>
+                    <div class="pref-chip" data-pref="🍟 Snacking">🍟 Snacking</div>
                     
-                    <div class="group-title">AFRIQUE</div>
-                    <div class="pref-chip" data-pref="🇸🇳 Sénégalais">🇸🇳 Sénégalais (Yassa/Mafé)</div>
-                    <div class="pref-chip" data-pref="🇨🇮 Ivoirien">🇨🇮 Ivoirien (Garba/Alloco)</div>
-                    <div class="pref-chip" data-pref="🇨🇲 Camerounais">🇨🇲 Camerounais (Ndolé)</div>
-                    <div class="pref-chip" data-pref="🇲🇦 Marocain">🇲🇦 Marocain</div>
-                    <div class="pref-chip" data-pref="🇩🇿 Algérien">🇩🇿 Algérien</div>
-
-                    <div class="group-title">ANTILLES & OCÉAN INDIEN</div>
-                    <div class="pref-chip" data-pref="🇬🇵 Antillais">🇬🇵 Antillais (Bokit/Accras)</div>
-                    <div class="pref-chip" data-pref="🇷🇪 Réunionnais">🇷🇪 Réunionnais (Rougail)</div>
-                    <div class="pref-chip" data-pref="🇭🇹 Haïtien">🇭🇹 Haïtien</div>
-                    <div class="pref-chip" data-pref="🏝️ Mauricien">🏝️ Mauricien</div>
-
-                    <div class="group-title">ASIE & ORIENT</div>
-                    <div class="pref-chip" data-pref="🥢 Vietnamien">🥢 Vietnamien (Banh Mi)</div>
-                    <div class="pref-chip" data-pref="🍱 Japonais">🍱 Japonais</div>
-                    <div class="pref-chip" data-pref="🍜 Thaï">🍜 Thaï</div>
-                    <div class="pref-chip" data-pref="🍛 Indien">🍛 Indien</div>
-                    <div class="pref-chip" data-pref="🥙 Libanais">🥙 Libanais</div>
-
-                    <div class="group-title">EUROPE & AMÉRIQUES</div>
-                    <div class="pref-chip" data-pref="🇫🇷 Terroir">🇫🇷 Terroir (Aligot)</div>
+                    <div class="group-title">🇫🇷 FRANCE & EUROPE</div>
+                    <div class="pref-chip" data-pref="🥨 Terroir">🇫🇷 Terroir (Aligot/Truffade)</div>
                     <div class="pref-chip" data-pref="🥞 Crêpes">🥞 Crêpes & Galettes</div>
-                    <div class="pref-chip" data-pref="🇲🇽 Mexicain">🇲🇽 Mexicain</div>
-                    <div class="pref-chip" data-pref="🇧🇷 Brésilien">🇧🇷 Brésilien</div>
+                    <div class="pref-chip" data-pref="🍝 Italie">🇮🇹 Italie (Pâtes/Risotto)</div>
+                    <div class="pref-chip" data-pref="🇪🇸 Espagne">🇪🇸 Espagne (Paella/Tapas)</div>
+                    <div class="pref-chip" data-pref="🇵🇹 Portugal">🇵🇹 Portugal (Poulet braisé)</div>
+                    <div class="pref-chip" data-pref="🐟 UK">🇬🇧 Fish & Chips</div>
+
+                    <div class="group-title">🌍 AFRIQUE</div>
+                    <div class="pref-chip" data-pref="🇸🇳 Sénégal">🇸🇳 Sénégal (Yassa/Mafé)</div>
+                    <div class="pref-chip" data-pref="🇨🇮 Côte d’Ivoire">🇨🇮 Côte d’Ivoire (Garba/Alloco)</div>
+                    <div class="pref-chip" data-pref="🇨🇲 Cameroun">🇨🇲 Cameroun (Ndolé)</div>
+                    <div class="pref-chip" data-pref="🇲🇦 Maghreb">🇲🇦 Maghreb (Couscous/Tajine)</div>
+
+                    <div class="group-title">🏝️ ANTILLES & OCÉAN INDIEN</div>
+                    <div class="pref-chip" data-pref="🇬🇵 Antilles">🇬🇵 Antilles (Bokit/Accras)</div>
+                    <div class="pref-chip" data-pref="🇷🇪 Réunion">🇷🇪 Réunion (Rougail Saucisse)</div>
+                    <div class="pref-chip" data-pref="🇭🇹 Haïti">🇭🇹 Haïti (Griot)</div>
+
+                    <div class="group-title">🌮 AMÉRIQUES</div>
+                    <div class="pref-chip" data-pref="🇲🇽 Mexique">🇲🇽 Mexique (Tacos/Burritos)</div>
+                    <div class="pref-chip" data-pref="🇨🇦 Canada">🇨🇦 Canada (Poutine)</div>
+                    <div class="pref-chip" data-pref="🇺🇸 USA">🇺🇸 USA Style</div>
+                    <div class="pref-chip" data-pref="🇧🇷 Brésil">🇧🇷 Brésil & Latino</div>
+
+                    <div class="group-title">🥢 ASIE & ORIENT</div>
+                    <div class="pref-chip" data-pref="🥢 Vietnam">🥢 Vietnam (Banh Mi/Pho)</div>
+                    <div class="pref-chip" data-pref="🍜 Thaïlande">🍜 Thaï (Pad Thaï)</div>
+                    <div class="pref-chip" data-pref="🍱 Japon">🍱 Japon (Ramen/Sushi)</div>
+                    <div class="pref-chip" data-pref="🍛 Inde">🍛 Inde (Curry/Naan)</div>
+                    <div class="pref-chip" data-pref="🥙 Liban">🥙 Liban (Mezzés/Falafel)</div>
                 </div>
             </div>
 
