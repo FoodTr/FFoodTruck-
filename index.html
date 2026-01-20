@@ -41,7 +41,6 @@
         .search-input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 15px; border: 1px solid #eee; background: #f1f1f1; font-size: 14px; outline: none; box-sizing: border-box; }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; }
 
-        /* Le container pour mettre côte à côte */
         .filters-row { display: flex; gap: 10px; margin-bottom: 10px; }
         .filter-section { flex: 1; position: relative; }
         
@@ -51,23 +50,22 @@
             color: #555; background: #f9f9f9; border: 1px solid #eee; border-radius: 12px;
         }
 
-        /* Contenu flottant pour ne pas décaler toute la page à l'ouverture */
         .filter-content { 
             display: none; flex-wrap: wrap; gap: 6px; padding: 12px; 
-            position: absolute; top: 110%; left: 0; width: 200%; 
-            background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            z-index: 3000; border: 1px solid #eee;
+            position: absolute; top: 110%; left: 0; width: 220%; 
+            background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 3000; border: 1px solid #eee; max-height: 400px; overflow-y: auto;
         }
-        /* Pour que le 2ème menu s'aligne à droite */
-        #sec-regime .filter-content { left: auto; right: 0; }
+        #sec-regime .filter-content { left: auto; right: 0; width: 180%; }
         
         .filter-content.open { display: flex; }
+        .group-title { width: 100%; font-size: 10px; color: #999; font-weight: 900; margin: 10px 0 5px 0; border-bottom: 1px solid #eee; padding-bottom: 3px; }
         .arrow { transition: 0.3s; font-size: 8px; color: #bbb; }
         .open-section .arrow { transform: rotate(180deg); }
 
         .pref-chip { 
             padding: 7px 12px; border-radius: 10px; border: 1px solid #eee; 
-            background: #f9f9f9; font-size: 11px; font-weight: bold; cursor: pointer; 
+            background: #f9f9f9; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap;
         }
         .pref-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
@@ -75,29 +73,29 @@
         .slider { flex: 1; -webkit-appearance: none; height: 4px; background: #ddd; border-radius: 5px; outline: none; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* Map & Cards */
+        /* Map & List */
         #map { width: 100%; height: 130px; border-radius: 20px; transition: 0.4s; z-index: 1; border: 1px solid #eee; }
         #map.expanded { height: 350px; }
         .map-wrapper { padding: 10px 15px; background: white; position: relative; z-index: 100; }
-        .btn-locate { position: absolute; bottom: 25px; right: 25px; z-index: 1000; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); cursor: pointer; }
+        .btn-locate { position: absolute; bottom: 25px; right: 25px; z-index: 1000; background: white; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; }
 
         .main-content { padding: 15px; padding-bottom: 100px; flex: 1; }
         .section-title { font-weight: 900; font-size: 11px; color: #bbb; text-transform: uppercase; margin-bottom: 15px; }
         
-        .truck-card { background: white; border-radius: 20px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #eee; position: relative; cursor: pointer; }
+        .truck-card { background: white; border-radius: 20px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #eee; position: relative; cursor: pointer; transition: 0.2s; }
         .truck-card.offline { opacity: 0.6; filter: grayscale(1); }
-        .offline-tag { font-size: 9px; background: #333; color: white; padding: 3px 8px; border-radius: 6px; font-weight: 900; position: absolute; top: 12px; right: 45px; }
+        .offline-tag { font-size: 9px; background: #333; color: white; padding: 3px 8px; border-radius: 6px; font-weight: 900; position: absolute; top: 12px; right: 50px; }
 
-        .truck-img { width: 60px; height: 60px; border-radius: 12px; margin-right: 12px; object-fit: cover; background: #eee; }
+        .truck-img { width: 65px; height: 65px; border-radius: 14px; margin-right: 15px; object-fit: cover; background: #eee; }
         .truck-info { flex: 1; }
-        .truck-name { font-weight: 900; font-size: 16px; margin-bottom: 2px; }
+        .truck-name { font-weight: 900; font-size: 17px; margin-bottom: 3px; }
         .truck-tags { font-size: 11px; color: #888; line-height: 1.4; }
         
         .fav-btn { font-size: 24px; color: #eee; cursor: pointer; padding: 5px; }
         .fav-btn.active { color: var(--primary); }
 
         .nav-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; background: #f8f8f8; color: #ccc; }
-        .nav-btn.active { background: var(--primary); color: white; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3); }
     </style>
 </head>
 <body>
@@ -110,24 +108,51 @@
     <div class="top-controls">
         <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" class="search-input" placeholder="Quel food truck aujourd'hui ?">
+            <input type="text" id="searchInput" class="search-input" placeholder="Chercher un food truck...">
         </div>
 
         <div class="filters-row">
             <div class="filter-section" id="sec-cuisine">
                 <div class="filter-header" onclick="toggleFilter('cuisine-content', 'sec-cuisine')">
-                    <span>🍕 CUISINES</span>
+                    <span>🌍 CUISINES</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div id="cuisine-content" class="filter-content">
+                    <div class="group-title">INCONTOURNABLES</div>
                     <div class="pref-chip" data-pref="🍔 Burgers">🍔 Burgers</div>
                     <div class="pref-chip" data-pref="🥩 Smash">🥩 Smash</div>
                     <div class="pref-chip" data-pref="🍕 Pizzas">🍕 Pizzas</div>
-                    <div class="pref-chip" data-pref="🌮 Tacos">🌮 Tacos</div>
-                    <div class="pref-chip" data-pref="🥙 Kebabs">🥙 Kebabs</div>
-                    <div class="pref-chip" data-pref="🍱 Sushis">🍱 Sushis</div>
+                    <div class="pref-chip" data-pref="🍟 Snacking">🍟 Snacking</div>
+                    
+                    <div class="group-title">EUROPE & TERROIR</div>
+                    <div class="pref-chip" data-pref="🇫🇷 Français">🇫🇷 Français</div>
                     <div class="pref-chip" data-pref="🥞 Crêpes">🥞 Crêpes</div>
+                    <div class="pref-chip" data-pref="🥨 Terroir">🥨 Terroir</div>
+                    <div class="pref-chip" data-pref="🍝 Italien">🍝 Italien</div>
+                    <div class="pref-chip" data-pref="🇪🇸 Espagnol">🇪🇸 Espagnol</div>
+                    <div class="pref-chip" data-pref="🐟 Fish & Chips">🐟 Fish&Chips</div>
+
+                    <div class="group-title">AMÉRIQUES</div>
+                    <div class="pref-chip" data-pref="🌮 Mexicain">🌮 Mexicain</div>
+                    <div class="pref-chip" data-pref="🌯 Burritos">🌯 Burritos</div>
+                    <div class="pref-chip" data-pref="🇺🇸 USA">🇺🇸 USA</div>
+                    <div class="pref-chip" data-pref="🇧🇷 Brésilien">🇧🇷 Brésilien</div>
+
+                    <div class="group-title">ASIE & ORIENT</div>
+                    <div class="pref-chip" data-pref="🍱 Japonais">🍱 Japonais</div>
+                    <div class="pref-chip" data-pref="🥢 Vietnamien">🥢 Vietnamien</div>
+                    <div class="pref-chip" data-pref="🍜 Wok/Thaï">🍜 Wok/Thaï</div>
+                    <div class="pref-chip" data-pref="🍛 Indien">🍛 Indien</div>
+                    <div class="pref-chip" data-pref="🥙 Libanais">🥙 Libanais</div>
+                    <div class="pref-chip" data-pref="🥙 Kebab/Gyros">🥙 Kebab/Gyros</div>
+
+                    <div class="group-title">AFRIQUE & ANTILLES</div>
+                    <div class="pref-chip" data-pref="🌍 Africain">🌍 Africain</div>
+                    <div class="pref-chip" data-pref="🏝️ Antillais">🏝️ Antillais</div>
+
+                    <div class="group-title">AUTRES</div>
                     <div class="pref-chip" data-pref="🍩 Desserts">🍩 Desserts</div>
+                    <div class="pref-chip" data-pref="☕ Coffee Shop">☕ Coffee Shop</div>
                 </div>
             </div>
 
@@ -137,12 +162,17 @@
                     <span class="arrow">▼</span>
                 </div>
                 <div id="regime-content" class="filter-content">
-                    <div class="pref-chip" data-pref="🥗 Veggie">🥗 Veggie</div>
+                    <div class="group-title">RÉGIMES ALIMENTAIRES</div>
+                    <div class="pref-chip" data-pref="🥗 Veggie">🥗 Végétarien</div>
                     <div class="pref-chip" data-pref="🌿 Vegan">🌿 Vegan</div>
                     <div class="pref-chip" data-pref="🥩 Halal">🥩 Halal</div>
                     <div class="pref-chip" data-pref="🕎 Casher">🕎 Casher</div>
-                    <div class="pref-chip" data-pref="🌾 Sans Gluten">🌾 Gluten-Free</div>
-                    <div class="pref-chip" data-pref="🏠 Maison">🏠 Maison</div>
+                    <div class="pref-chip" data-pref="🌾 Sans Gluten">🌾 Sans Gluten</div>
+                    
+                    <div class="group-title">QUALITÉ & LABELS</div>
+                    <div class="pref-chip" data-pref="🏠 Maison">🏠 Fait Maison</div>
+                    <div class="pref-chip" data-pref="📍 Local">📍 Local / Bio</div>
+                    <div class="pref-chip" data-pref="🌶️ Épicé">🌶️ Épicé</div>
                 </div>
             </div>
         </div>
@@ -183,7 +213,11 @@
     let activePrefs = [];
     let userMarker;
 
-    // Toggle Filtres (Ferme l'autre quand on en ouvre un)
+    const activeFlame = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/426/426833.png', 
+        iconSize: [30, 30], iconAnchor: [15, 30]
+    });
+
     window.toggleFilter = (contentId, sectionId) => {
         const content = document.getElementById(contentId);
         const section = document.getElementById(sectionId);
@@ -198,7 +232,6 @@
         }
     };
 
-    // Fermer les menus si on clique ailleurs
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.filter-section')) {
             document.querySelectorAll('.filter-content').forEach(c => c.classList.remove('open'));
@@ -206,19 +239,56 @@
         }
     });
 
-    // ... Reste de la logique (Distance, Geolocation, Rendu) identique au précédent ...
-    // [Logique simplifiée pour le rendu]
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    window.getUserLocation = () => {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const lat = pos.coords.latitude; const lng = pos.coords.longitude;
+            map.setView([lat, lng], 13);
+            if (userMarker) map.removeLayer(userMarker);
+            userMarker = L.circleMarker([lat, lng], { radius: 8, fillColor: "#007AFF", color: "white", weight: 3, fillOpacity: 1 }).addTo(map);
+            renderTrucks();
+        });
+    };
+
     function renderTrucks() {
         const container = document.getElementById('trucks-list');
         const maxDist = parseInt(document.getElementById('distRange').value);
+        const search = document.getElementById('searchInput').value.toLowerCase();
         container.innerHTML = "";
         
-        allTrucks.forEach(t => {
-            const matchesPrefs = activePrefs.length === 0 || activePrefs.every(p => [...(t.specialities||[]), t.category].includes(p));
-            if (matchesPrefs) {
+        map.eachLayer(l => { if(l instanceof L.Marker && l !== userMarker) map.removeLayer(l); });
+
+        const trucks = [...allTrucks].sort((a,b) => b.isOpen - a.isOpen);
+        let count = 0;
+
+        trucks.forEach(t => {
+            const isFav = favorites.includes(t.id);
+            const truckTags = [...(t.specialities || []), t.category || ""];
+            const matchesPrefs = activePrefs.length === 0 || activePrefs.every(p => truckTags.includes(p));
+            const matchesSearch = t.truckName.toLowerCase().includes(search);
+            
+            let dist = userMarker ? getDistance(userMarker.getLatLng().lat, userMarker.getLatLng().lng, t.latitude, t.longitude) : 0;
+            const isInRange = !userMarker || dist <= maxDist;
+
+            if (isInRange && matchesPrefs && matchesSearch) {
+                count++;
+                L.marker([t.latitude, t.longitude], {icon: activeFlame}).addTo(map);
                 const card = document.createElement('div');
                 card.className = `truck-card ${t.isOpen ? '' : 'offline'}`;
-                card.innerHTML = `<img src="${t.image||'https://via.placeholder.com/60'}" class="truck-img"><div class="truck-info"><div class="truck-name">${t.truckName}</div><div class="truck-tags">● ${t.isOpen?'Ouvert':'Fermé'}</div></div><div class="fav-btn">❤</div>`;
+                card.innerHTML = `
+                    <img src="${t.image || 'https://via.placeholder.com/65'}" class="truck-img">
+                    <div class="truck-info">
+                        <div class="truck-name">${t.truckName}</div>
+                        <div class="truck-tags">● ${t.isOpen ? 'En service' : 'Fermé'} ${userMarker ? ' • ' + dist.toFixed(1) + 'km' : ''}<br>${truckTags.filter(x=>x).join(' • ')}</div>
+                    </div>`;
                 container.appendChild(card);
             }
         });
@@ -237,6 +307,7 @@
         allTrucks = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
         renderTrucks();
     });
+    window.getUserLocation();
 </script>
 </body>
 </html>
