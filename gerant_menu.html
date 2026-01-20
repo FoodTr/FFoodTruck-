@@ -6,7 +6,7 @@
     <title>FFoodTrucks PRO - Studio Produit</title>
 
 <style>
-    /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
+    /* --- CSS OPTIMISÉ --- */
     body { 
         font-family: -apple-system, sans-serif; 
         margin: 0; 
@@ -19,7 +19,7 @@
 
     .main-wrapper { 
         width: 100%;
-        max-width: 700px; /* Un peu plus large pour le confort de saisie sur PC */
+        max-width: 700px; 
         padding: 20px; 
         box-sizing: border-box; 
         padding-bottom: 100px; 
@@ -28,7 +28,6 @@
         border-right: 1px solid #333;
     }
 
-    /* --- RESTE DU CSS CONSERVÉ --- */
     .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
     .back-btn { font-size: 24px; cursor: pointer; border: 1px solid #333; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 15px; background: #1e1e1e; }
     
@@ -40,12 +39,11 @@
     .scan-line { width: 100%; height: 3px; background: #FF3B30; position: absolute; top: 0; animation: scan 1.5s infinite linear; box-shadow: 0 0 15px #FF3B30; }
     @keyframes scan { from { top: 0; } to { top: 100%; } }
     
-    .form-group { margin-bottom: 20px; }
     label { display: block; color: #FF3B30; font-size: 11px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
     
     .cat-search-input { width: 100%; background: #1e1e1e; border: 1px solid #333; padding: 18px; border-radius: 15px; color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
-    .category-selector { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scrollbar-width: none; }
-    .cat-chip { flex: 0 0 auto; padding: 12px 20px; background: #1e1e1e; border: 1px solid #444; border-radius: 15px; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; }
+    .category-selector { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .cat-chip { flex: 0 0 auto; padding: 12px 20px; background: #1e1e1e; border: 1px solid #444; border-radius: 15px; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; transition: 0.2s; }
     .cat-chip.active { background: #FF3B30; color: white; border-color: #FF3B30; }
     
     .labels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
@@ -54,8 +52,6 @@
     
     .main-input { width: 100%; background: #1e1e1e; border: 1px solid #333; padding: 20px; border-radius: 15px; color: white; font-size: 18px; box-sizing: border-box; outline: none; margin-bottom: 20px; }
     .btn-publish { background: #FF3B30; color: white; border: none; width: 100%; padding: 25px; border-radius: 20px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 59, 48, 0.3); transition: 0.2s; }
-    .btn-publish:active { transform: scale(0.98); }
-    .btn-publish:disabled { background: #555; cursor: not-allowed; }
 </style>
 
 </head>
@@ -72,7 +68,7 @@
     <div class="ai-status-badge">✨ IA OPTIMISEUR</div>
     <div id="instruction" style="text-align:center;">
         <span style="font-size: 50px;">📸</span><br>
-        <span style="font-size: 12px; color: #888;">Prendre la photo brute du plat</span>
+        <span style="font-size: 12px; color: #888; margin-top: 10px; display: block;">Prendre la photo brute du plat</span>
     </div>
     <img id="preview-img">
     <div id="ai-processing" class="ai-loader">
@@ -83,7 +79,7 @@
 </div>
 
 <label>Catégorie de produit</label>
-<input type="text" id="cat-search" class="cat-search-input" placeholder="🔍 Chercher...">
+<input type="text" id="cat-search" class="cat-search-input" placeholder="🔍 Chercher une spécialité...">
 <div class="category-selector" id="cat-container"></div>
 
 <label>Labels Alimentaires</label>
@@ -92,6 +88,8 @@
     <div class="label-box">🥗 VÉGÉTARIEN</div>
     <div class="label-box">🥩 HALAL</div>
     <div class="label-box">🌾 SANS GLUTEN</div>
+    <div class="label-box">🌶️ ÉPICÉ</div>
+    <div class="label-box">🏠 MAISON</div>
 </div>
 
 <label>Nom du plat</label>
@@ -112,7 +110,15 @@
     import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const categories = ["🍔 Burgers", "🍕 Pizzas", "🌮 Tacos", "🌯 Kebabs", "🍱 Sushis", "🥗 Salades", "🍟 Frites/Sides", "🍩 Desserts", "🥤 Boissons"];
+    // --- LISTE EMOJI COMPLÈTE ---
+    const categories = [
+        "🍔 Burgers", "🥩 Smash Burgers", "🍕 Pizzas", "🌮 Tacos", "🌯 Burritos", 
+        "🥙 Kebabs/Gyros", "🍱 Sushis", "🍜 Ramen/Wok", "🥖 Banh Mi", "🥗 Salades/Poke", 
+        "🍟 Frites/Sides", "🍗 Poulet Frit", "🥨 Terroir/Fermier", "🥞 Crêpes/Galettes", 
+        "🍝 Pâtes", "🐟 Fish & Chips", "🥘 Plats Cuisinés", "🍩 Desserts", "🍦 Glaces", 
+        "🥤 Boissons", "☕ Café/Tea"
+    ];
+
     let selectedCat = "🍔 Burgers";
     let currentImg = "";
 

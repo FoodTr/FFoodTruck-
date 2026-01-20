@@ -11,7 +11,6 @@
     <style>
         :root { --primary: #FF3B30; --bg: #f8f8f8; }
         
-        /* --- CSS MODIFIÉ POUR PC & TABLETTE --- */
         body { 
             font-family: -apple-system, sans-serif; 
             margin: 0; 
@@ -24,7 +23,7 @@
 
         .main-wrapper { 
             width: 100%; 
-            max-width: 700px; /* Largeur optimale pour la navigation et la carte sur PC */
+            max-width: 700px; 
             min-height: 100vh; 
             background: var(--bg); 
             position: relative; 
@@ -38,7 +37,7 @@
             position: fixed; 
             bottom: 0; 
             width: 100%; 
-            max-width: 700px; /* Aligné sur la largeur du wrapper */
+            max-width: 700px; 
             height: 80px; 
             background: white; 
             border-top: 1px solid #eee; 
@@ -48,7 +47,6 @@
             z-index: 9999 !important; 
         }
 
-        /* --- RESTE DU CSS CONSERVÉ --- */
         .header { text-align: center; padding: 15px 0; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 2000; }
         .app-name { font-size: 22px; font-weight: 900; font-style: italic; }
         .app-name span { color: var(--primary); }
@@ -64,10 +62,11 @@
         .slider { flex: 1; -webkit-appearance: none; height: 4px; background: #ddd; border-radius: 5px; outline: none; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        .pref-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        /* --- NOUVELLES CATÉGORIES --- */
+        .pref-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .pref-nav::-webkit-scrollbar { display: none; }
-        .pref-chip { flex: 0 0 auto; padding: 8px 15px; border-radius: 20px; border: 1px solid #eee; background: #f9f9f9; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .pref-chip.active { background: #333; color: white; border-color: #333; }
+        .pref-chip { flex: 0 0 auto; padding: 8px 15px; border-radius: 20px; border: 1px solid #eee; background: #f9f9f9; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .pref-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         .map-wrapper { padding: 10px 15px; background: white; position: relative; z-index: 100; }
         #map { width: 100%; height: 130px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; cursor: pointer; }
@@ -112,12 +111,21 @@
             <span style="font-weight: 900; font-size: 14px; min-width: 65px;">📍 <span id="dist-val">10</span>km</span>
             <input type="range" min="1" max="100" value="10" class="slider" id="distRange">
         </div>
-        <div class="pref-nav">
-            <div class="pref-chip" data-pref="🍔 Burger">🍔 Burger</div>
-            <div class="pref-chip" data-pref="🍕 Pizza">🍕 Pizza</div>
-            <div class="pref-chip" data-pref="🌿 Veggie">🌿 Veggie</div>
-            <div class="pref-chip" data-pref="🥩 Halal">🥩 Halal</div>
+        
+        <div class="pref-nav" id="prefNav">
+            <div class="pref-chip" data-pref="🍔 Burgers">🍔 Burgers</div>
+            <div class="pref-chip" data-pref="🥩 Smash">🥩 Smash</div>
+            <div class="pref-chip" data-pref="🍕 Pizzas">🍕 Pizzas</div>
             <div class="pref-chip" data-pref="🌮 Tacos">🌮 Tacos</div>
+            <div class="pref-chip" data-pref="🌯 Burritos">🌯 Burritos</div>
+            <div class="pref-chip" data-pref="🍱 Sushis">🍱 Sushis</div>
+            <div class="pref-chip" data-pref="🍜 Wok">🍜 Wok</div>
+            <div class="pref-chip" data-pref="🥖 Banh Mi">🥖 Banh Mi</div>
+            <div class="pref-chip" data-pref="🥗 Healthy">🥗 Healthy</div>
+            <div class="pref-chip" data-pref="🥞 Crêpes">🥞 Crêpes</div>
+            <div class="pref-chip" data-pref="🥨 Terroir">🥨 Terroir</div>
+            <div class="pref-chip" data-pref="🌿 Vegan">🌿 Vegan</div>
+            <div class="pref-chip" data-pref="🥩 Halal">🥩 Halal</div>
         </div>
     </div>
 
@@ -212,7 +220,11 @@
             if (!truck.latitude || !truck.longitude) return;
 
             const isFav = favorites.includes(truck.id);
-            const matchesPrefs = activePrefs.length === 0 || activePrefs.some(p => truck.specialities?.includes(p));
+            // Recherche intelligente dans category OU specialities
+            const matchesPrefs = activePrefs.length === 0 || activePrefs.some(p => 
+                (truck.category && truck.category.includes(p)) || 
+                (truck.specialities && truck.specialities.includes(p))
+            );
             const matchesFavFilter = !showOnlyFavs || isFav;
             const matchesSearch = truck.truckName.toLowerCase().includes(searchQuery);
             
@@ -242,9 +254,9 @@
                     <div class="truck-info">
                         <div class="truck-name">${truck.truckName}</div>
                         <div class="truck-tags">
-                            <span style="color: ${truck.isOpen ? '#4CAF50' : '#888'};">● ${truck.isOpen ? 'En service' : 'Fermé'}</span> 
+                            <span style="color: ${truck.isOpen ? '#4CAF50' : '#888'}; font-weight:bold;">● ${truck.isOpen ? 'En service' : 'Fermé'}</span> 
                             ${distance ? `• ${distance.toFixed(1)} km` : ''}<br>
-                            ${truck.specialities ? truck.specialities.join(' • ') : 'Street Food'}
+                            ${truck.category || 'Street Food'}
                         </div>
                     </div>
                     <div class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav('${truck.id}', event)">❤</div>
@@ -254,7 +266,7 @@
         });
 
         if(count === 0) {
-            container.innerHTML = `<div style="text-align:center; color:#999; margin-top:30px; font-size:14px;">Aucun résultat... 🚛</div>`;
+            container.innerHTML = `<div style="text-align:center; color:#999; margin-top:30px; font-size:14px;">Aucun résultat trouvé... 🚛</div>`;
         }
     }
 
